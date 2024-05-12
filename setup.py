@@ -45,7 +45,7 @@ from setuptools import (
 # INTERNAL IMPORTS
 # +++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-from src.meetlify import __VERSION__
+from src.meetlify import __version__
 
 # +++++++++++++++++++++++++++++++++++++++++++++++++++++
 # DATABASE/CONSTANTS LIST
@@ -93,7 +93,7 @@ setup(
     name="meetlify",
     packages=find_packages(SRC_DIR),
     package_dir={"": SRC_DIR},
-    version=__VERSION__,
+    version=__version__,
     description="Python Package to Generate Meetup Websites",
     long_description=long_description,
     long_description_content_type="text/markdown",
@@ -101,7 +101,7 @@ setup(
     author_email="pybodensee@gmail.com",
     url="https://github.com/pybodensee/meetlify",
     download_url="https://github.com/pybodensee/meetlify/releases/v%s.tar.gz"
-    % __VERSION__,
+    % __version__,
     license="MIT",
     keywords=["meetups", "static-site-generators", "seo", "python"],
     scripts=[],
