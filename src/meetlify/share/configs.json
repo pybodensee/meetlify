@@ -1,0 +1,34 @@
+{
+    "name": "PyBodensee",
+    "URL": "",
+    "language": "en",
+    "theme": "lindau",
+    "title": "Python User Group in Bodensee Region",
+    "author": "Faisal Shahzad",
+    "email": "pybodensee at gmail dot com",
+    "description": "We are Python User Group in Bodensee Region to bring Python developers and enthusiasts on a single platform",
+    "sitemap": true,
+    "feeds": true,
+    "robots": true,
+    "logo": "logo.png",
+    "favicon": "favicon.png",
+    "copyright": "Copyright © PyBodensee 2024",
+    "home": "home",
+    "folders": {
+        "output": "output",
+        "content": "content",
+        "meetups": "meetups",
+        "pages": "pages"
+    },
+    "menu": {
+        "header": {
+            "Meetups": "meetups",
+            "GitHub": "https://github.com/pybodensee"
+        },
+        "footer": {
+            "Privacy": "privacy",
+            "Terms": "terms",
+            "Contact": "contact"
+        }
+    }
+}

@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    {% block main_header %}
+    {% endblock main_header %}
+    <!-- Favicon-->
+    <link rel="icon" type="image/x-icon" href="{{meta.URL}}/static/assets/favicon.png" />
+    <!-- Bootstrap icons-->
+    <link href="{{meta.URL}}/static/css/bootstrap-icons.css" rel="stylesheet" />
+    <!-- Core theme CSS (includes Bootstrap)-->
+    <link href="{{meta.URL}}/static/css/styles.css" rel="stylesheet" />
+</head>
+
+<body class="d-flex flex-column h-100">
+    <main class="flex-shrink-0">
+        <!-- Navigation-->
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+            <div class="container px-5">
+                <a class="navbar-brand" href="/">
+                    <img src="{{meta.URL}}/static/assets/logo.webp" width="80.6" height="30"
+                        class="d-inline-block align-top" alt="{{meta.name}} Logo"></a>
+
+                <a class="navbar-brand" href="/">{{meta.name}}</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                    data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+                    aria-expanded="false" aria-label="Toggle navigation"><span
+                        class="navbar-toggler-icon"></span></button>
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                        {% for key,value in meta.menu.header.items()%}
+                        {% if value.startswith('https://') %}
+                        <li class="nav-item"><a class="nav-link" href="{{value}}/" target="_blank">{{key}}</a></li>
+                        {% else %}
+                        <li class="nav-item"><a class="nav-link" href="{{meta.URL}}/{{value}}/">{{key}}</a></li>
+                        {% endif %}
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </nav>
+        {% block main_content %}
+        {% endblock main_content %}
+    </main>
+    <!-- Footer-->
+    <footer class="bg-dark py-4 mt-auto">
+        <div class="container px-5">
+            <div class="row align-items-center justify-content-between flex-column flex-sm-row">
+                <div class="col-auto">
+                    <div class="small m-0 text-white">{{meta.copyright}}</div>
+                </div>
+                <div class="col-auto">
+                    {% for key,value in meta.menu.footer.items()%}
+                    <a class="link-light small" href="{{meta.URL}}/{{value}}/">{{key}}</a>
+
+                    <span class="text-white mx-1">{{ "&middot;" if not loop.last else "" }}</span>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </footer>
+    <!-- Bootstrap core JS-->
+    <script src="{{meta.URL}}/static/js/bootstrap.bundle.min.js"></script>
+    <!-- Core theme JS-->
+    <script src="{{meta.URL}}/static/js/scripts.js"></script>
+</body>
+
+</html>

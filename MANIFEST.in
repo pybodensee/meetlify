@@ -1,0 +1,2 @@
+recursive-include src/meetlify/share/ *.*
+recursive-include src/meetlify/themes/ *.*

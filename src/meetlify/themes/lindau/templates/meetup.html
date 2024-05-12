@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+
+{% block main_header %}
+<meta name="description" content="{{front.description}}" />
+<meta name="author" content="{{front.author}}" />
+<link href="{{meta.URL}}/meetups/{{front.slug}}/" rel="canonical" />
+<title>{{front.title}}</title>
+{% endblock main_header %}
+
+{% block main_content %}
+<!-- Page Content-->
+<section class="py-5">
+    <div class="container px-5 my-5">
+        <div class="row gx-5">
+            <div class="col-lg-3">
+                <div class="d-flex align-items-center mt-lg-5 mb-4">
+                    <img class="img-fluid rounded-circle" src="{{meta.URL}}/static/assets/author.png" width="40"
+                        height="40" alt="{{meta.author}} Image" />
+                    <div class="ms-3">
+                        <div class="fw-bold">{{front.author}}</div>
+                        <div class="text-muted">Organizer</div>
+                    </div>
+                </div>
+                <!-- Post meta content-->
+                <div class="row">
+                    <div class="text-muted mb-2">Event Date: <div class="fw-bold">{{front.date}}</div>
+                    </div>
+                    <div class="text-muted mb-2">Event Location: <div class="fw-bold">{{front.address}}</div>
+                    </div>
+                </div>
+                <div class="card border-0 bg-light mt-xl-5">
+                    <div class="card-body p-4 py-lg-5">
+                        <div class="d-flex align-items-center justify-content-center">
+                            <div class="text-center">
+                                <div class="h6 fw-bolder">Have more questions?</div>
+                                <p class="text-muted mb-4">
+                                    Check out our <a href=" {{meta.URL}}/contact/">Contact us</a> page for differnt
+                                    methods to get in touch.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-9">
+                <!-- Post content-->
+                <article>
+                    <!-- Post header-->
+                    <header class="mb-4">
+                        <!-- Post title-->
+                        <h1 class="fw-bolder mb-1">Meetup # {{front.id}} - {{front.title}}</h1>
+                        <!-- Post categories-->
+                        <a class="badge bg-secondary text-decoration-none link-light" href="/">Python</a>
+                        <a class="badge bg-secondary text-decoration-none link-light" href="/">Meetup</a>
+                    </header>
+                    <section class="mb-5">
+                        {{ content }}
+                    </section>
+                </article>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock main_content %}

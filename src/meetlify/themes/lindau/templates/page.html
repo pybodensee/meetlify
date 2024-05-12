@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block main_header %}
+<meta name="description" content="{{front.description}}" />
+<meta name="author" content="{{front.author}}" />
+<link href="{{meta.URL}}/{{front.slug}}/" rel="canonical" />
+<title>{{front.title}}</title>
+{% endblock main_header %}
+
+{% block main_content %}
+<!-- Header-->
+<section class="py-5">
+    <div class="container px-5">
+        {{front.content}}
+    </div>
+</section>
+{% endblock main_content %}

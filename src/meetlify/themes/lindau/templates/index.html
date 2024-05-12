@@ -1,0 +1,103 @@
+{% extends "base.html" %}
+
+{% block main_header %}
+<meta name="description" content="{{meta.description}}" />
+<meta name="author" content="{{meta.author}}" />
+<link href="{{meta.URL}}" rel="canonical" />
+<title>{{meta.title}}</title>
+{% endblock main_header %}
+
+{% block main_content %}
+<!-- Header-->
+<header class="bg-dark py-5" id="home">
+    <div class="container px-5">
+        <div class="row gx-5 align-items-center justify-content-center">
+            <div class="col-lg-8 col-xl-7 col-xxl-6">
+                <div class="my-5 text-center text-xl-start">
+                    <h1 class="display-5 fw-bolder text-white mb-2">{{meta.title}}
+                    </h1>
+                    <p class="lead fw-normal text-white-50 mb-4"> Our next meetup is in <em
+                            class="lead fw-normal text-white mb-4">Lindau am Bodensee</em> on
+                        <em class="lead fw-normal text-white mb-4"> {{meetups[0].date}}</em>. Drop us an email at <em
+                            class="lead fw-normal text-white mb-4">{{meta.email}}</em>
+                        if you plan to join. This will help to for better organization of the
+                        event.
+                    </p>
+                    <div class="d-grid gap-3 d-sm-flex justify-content-sm-center justify-content-xl-start">
+                        <a class="btn btn-primary btn-lg px-4 me-sm-3"
+                            href="{{meta.URL}}/meetups/{{meetups[0].slug}}/">More Details</a>
+                        <a class="btn btn-outline-light btn-lg px-4" href="{{meta.URL}}/meetups/">Future Meetups</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-5 col-xxl-6 d-none d-xl-block text-center"><img class="img-fluid rounded-3 my-5"
+                    src="{{meta.URL}}/static/assets/banner.png" alt="{{meta.name}} about us banner" /></div>
+        </div>
+    </div>
+</header>
+<section class="py-5" id="about">
+    <div class="container px-5 my-5">
+        <div class="row gx-5 align-items-center">
+            <div class="col-lg-6 order-first order-lg-last"><img class="img-fluid rounded mb-5 mb-lg-0"
+                    src="{{meta.URL}}/static/assets/about.png" alt="{{meta.author}} image"></div>
+            <div class="col-lg-6">
+                {{home_content}}
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="py-5 bg-light" id="meetups">
+    <div class="container px-5 my-5">
+        <div class="row gx-5 justify-content-left">
+            <div class="col-lg-12">
+                <div class="text-left">
+                    <h2 class="fw-bolder  mb-4">Meetups</h2>
+                    <p class="lead fw-normal text-muted mb-5">Here is the list of upcoming meetups organized by
+                        PyBodensee. </p>
+                </div>
+            </div>
+        </div>
+        <div class="row gx-5">
+            {% for meetup in meetups%}
+            <div class="col-lg-4 mb-5">
+                <div class="card h-100 shadow border-0">
+                    <img class="card-img-top" src="{{meta.URL}}/images/{{meetup.featureimage}}"
+                        alt="Feature Image for Meetup">
+                    <div class="card-body p-4">
+                        <div class="badge bg-primary bg-gradient rounded-pill mb-2">Meetup</div>
+                        <a class="text-decoration-none link-dark stretched-link"
+                            href="{{meta.URL}}/meetups/{{meetup.slug}}/">
+                            <h5 class="card-title mb-3">Meetup # {{meetup.id}} -
+                                {{meetup.title}}
+                            </h5>
+                        </a>
+                        <p class="card-text mb-0">Agenda: {{meetup.description}}</p>
+                    </div>
+                    <div class="card-footer p-4 pt-0 bg-transparent border-top-0">
+                        <div class="d-flex align-items-end justify-content-between">
+                            <div class="d-flex align-items-center">
+                                <div class="small">
+                                    <div class="fw-bold">Date: {{meetup.date}} · Status:
+                                        <em>{{meetup.status}}</em>
+                                    </div>
+                                    <div class="text-muted">Location: {{meetup.address}}
+                                    </div>
+                                    <div class="text-muted">Organizer: {{meetup.author}}</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor%}
+        </div>
+        <div class="text-end mb-5 mb-xl-0">
+            <a class="text-decoration-none" href="{{meta.URL}}/meetups/">
+                Older Meetups
+                <i class="bi bi-arrow-right"></i>
+            </a>
+        </div>
+    </div>
+</section>
+{% endblock main_content %}
