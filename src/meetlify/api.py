@@ -119,6 +119,7 @@ class Meetlify:
             for mt in Path(self.dest, self.configs.folders.content, "meetups").iterdir()
             if mt.is_file() and mt.suffix == ".md"
         ]
+        self.meetups = [mt for mt in self.meetups if mt.status in ["open", "close"]]
         self.meetups = sorted(self.meetups, key=lambda x: x.id, reverse=True)
 
     def render_home(self):
