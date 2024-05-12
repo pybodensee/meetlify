@@ -63,4 +63,4 @@ Pull Requests, Feature Suggestions, and collaborations are welcome.
 
 ## About Us
 
-This work is a collaborative effort of [PyBodensee](https://pybodensee.com/), and [pybodensee](https://pybodensee.com/).
+This work is a collaborative effort of [PyBodensee](https://pybodensee.com/), and [SerpWings](https://serpwings.com/).
