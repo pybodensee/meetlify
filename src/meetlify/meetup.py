@@ -44,6 +44,7 @@ from dataclasses import dataclass
 # +++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 import markdown
+from slugify import slugify
 
 
 # +++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -79,14 +80,22 @@ class Meetup:
         _md = markdown.Markdown(extensions=["meta", "attr_list"])
         with codecs.open(meetup_, "r", encoding="utf-8") as f:
             data = f.read()
+            content_ = _md.convert(data)
+
+            slug_ = (
+                "".join(_md.Meta["slug"])
+                if _md.Meta.get("slug")
+                else slugify("".join(_md.Meta["title"]))
+            )
+
             return cls(
-                content=_md.convert(data),
+                content=content_,
                 id="".join(_md.Meta["id"]),
                 date="".join(_md.Meta["date"]),
                 author="".join(_md.Meta["author"]),
                 title="".join(_md.Meta["title"]),
                 description="".join(_md.Meta["description"]),
-                slug="".join(_md.Meta["slug"]),
+                slug=slug_,
                 featureimage="".join(_md.Meta["featureimage"]),
                 address="".join(_md.Meta["address"]),
                 status="".join(_md.Meta["status"]),
