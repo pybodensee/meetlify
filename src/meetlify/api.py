@@ -241,7 +241,7 @@ class Meetlify:
 
         # copy static folders
         shutil.copytree(
-            Path(self.src, "themes", self.configs.theme, "static"),
+            Path(self.dest, "themes", self.configs.theme, "static"),
             Path(
                 self.dest,
                 self.configs.folders.output,
