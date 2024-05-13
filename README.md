@@ -23,9 +23,9 @@ Create an empty folder on your computer or move to a desired location where you 
 
 1. Now execute ``meetlify init`` which will crate an empty configuration file (JSON) in the folder. Feel free to edit it as per your need. Content of the configuration file are self explanatory.  
 
-2. Now execute ```meetlify setup`` which will setup the all folders as per your configurations. 
+2. Now execute ``meetlify setup`` which will setup the all folders as per your configurations. 
 
-3. Now execute ```meetlify make`` which will generate full website in output folder.
+3. Now execute ``meetlify make`` which will generate full website in output folder.
 
 
 ### Using Application Programming Interface (API)
