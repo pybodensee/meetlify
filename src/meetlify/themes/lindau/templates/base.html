@@ -12,6 +12,9 @@
     <link href="{{meta.URL}}/static/css/bootstrap-icons.css" rel="stylesheet" />
     <!-- Core theme CSS (includes Bootstrap)-->
     <link href="{{meta.URL}}/static/css/styles.css" rel="stylesheet" />
+    <!-- Cookies Alert-->
+    <link href="{{meta.URL}}/static/css/cookiealert.css" rel="stylesheet">
+
 </head>
 
 <body class="d-flex flex-column h-100">
@@ -62,7 +65,18 @@
             </div>
         </div>
     </footer>
+    <div class="alert text-center text-white cookiealert show" role="alert">
+        <b>Do you like cookies?</b> 🍪 We and our selected third parties use cookies or similar technologies to ensure
+        you get the best experience on our website. They are specified in the our <a class="text-white"
+            href="{{meta.url}}/privacy/" target="_blank">Privacy Policy</a> and <a class="text-white"
+            href="{{meta.url}}/terms/" target="_blank">Terms of Services</a>.
+        <button type="button" class="btn btn-primary btn-sm acceptcookies">
+            I agree
+        </button>
+    </div>
+
     <!-- Bootstrap core JS-->
+    <script src="{{meta.URL}}/static/js/cookiealert.js"></script>
     <script src="{{meta.URL}}/static/js/bootstrap.bundle.min.js"></script>
     <!-- Core theme JS-->
     <script src="{{meta.URL}}/static/js/scripts.js"></script>
