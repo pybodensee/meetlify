@@ -12,6 +12,9 @@
     <link href="{{meta.URL}}/static/css/bootstrap-icons.css" rel="stylesheet" />
     <!-- Core theme CSS (includes Bootstrap)-->
     <link href="{{meta.URL}}/static/css/styles.css" rel="stylesheet" />
+    <!-- Cookies Alert-->
+    <link href="{{meta.URL}}/static/css/cookiealert.css" rel="stylesheet">
+
 </head>
 
 <body class="d-flex flex-column h-100">
@@ -20,14 +23,15 @@
         <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
             <div class="container px-5">
                 <a class="navbar-brand" href="/">
-                    <img src="{{meta.URL}}/static/assets/{{meta.logo}}" width="80.6" height="30"
+                    <img src="{{meta.URL}}/static/assets/{{meta.logo}}" width="80" height="30"
                         class="d-inline-block align-top" alt="{{meta.name}} Logo"></a>
-
                 <a class="navbar-brand" href="/">{{meta.name}}</a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
                     data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
-                    aria-expanded="false" aria-label="Toggle navigation"><span
-                        class="navbar-toggler-icon"></span></button>
+                    aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon">
+                    </span>
+                </button>
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
                         {% for key,value in meta.menu.header.items()%}
@@ -49,11 +53,11 @@
         <div class="container px-5">
             <div class="row align-items-center justify-content-between flex-column flex-sm-row">
                 <div class="col-auto">
-                    <div class="small m-0 text-white">{{meta.copyright}}</div>
+                    <div class="m-0 text-white">{{meta.copyright}}</div>
                 </div>
                 <div class="col-auto">
                     {% for key,value in meta.menu.footer.items()%}
-                    <a class="link-light small" href="{{meta.URL}}/{{value}}/">{{key}}</a>
+                    <a class="link-light" href="{{meta.URL}}/{{value}}/">{{key}}</a>
 
                     <span class="text-white mx-1">{{ "&middot;" if not loop.last else "" }}</span>
                     {% endfor %}
@@ -61,7 +65,18 @@
             </div>
         </div>
     </footer>
+    <div class="alert text-center text-white cookiealert show" role="alert">
+        <b>Do you like cookies?</b> 🍪 We and our selected third parties use cookies or similar technologies to ensure
+        you get the best experience on our website. They are specified in the our <a class="text-white"
+            href="{{meta.url}}/privacy/" target="_blank">Privacy Policy</a> and <a class="text-white"
+            href="{{meta.url}}/terms/" target="_blank">Terms of Services</a>.
+        <button type="button" class="btn btn-primary btn-sm acceptcookies">
+            I agree
+        </button>
+    </div>
+
     <!-- Bootstrap core JS-->
+    <script src="{{meta.URL}}/static/js/cookiealert.js"></script>
     <script src="{{meta.URL}}/static/js/bootstrap.bundle.min.js"></script>
     <!-- Core theme JS-->
     <script src="{{meta.URL}}/static/js/scripts.js"></script>

@@ -16,12 +16,13 @@
                 <div class="my-5 text-center text-xl-start">
                     <h1 class="display-5 fw-bolder text-white mb-2">{{meta.title}}
                     </h1>
-                    <p class="lead fw-normal text-white-50 mb-4"> Our next meetup is in <em
-                            class="lead fw-normal text-white mb-4">Lindau am Bodensee</em> on
-                        <em class="lead fw-normal text-white mb-4"> {{meetups[0].date}}</em>. Drop us an email at <em
-                            class="lead fw-normal text-white mb-4">{{meta.email}}</em>
-                        if you plan to join. This will help to for better organization of the
-                        event.
+                    <p class="text-white-50 mb-4"> Our next meetup is in <em class="text-white mb-4">Wangen im
+                            Allgäu</em> on
+                        <em class="text-white mb-4"> {{meetups[0].date}}</em>.
+                    </p>
+                    <p class="text-white-50 mb-4">
+                        Drop us an email at <em class="text-white mb-4">{{meta.email}}</em>
+                        if you plan to join. This will help to better organize the event.
                     </p>
                     <div class="d-grid gap-3 d-sm-flex justify-content-sm-center justify-content-xl-start">
                         <a class="btn btn-primary btn-lg px-4 me-sm-3"
@@ -53,7 +54,7 @@
             <div class="col-lg-12">
                 <div class="text-left">
                     <h2 class="fw-bolder  mb-4">Meetups</h2>
-                    <p class="lead fw-normal text-muted mb-5">Here is the list of upcoming meetups organized by
+                    <p class="mb-5">Here is the list of upcoming meetups organized by
                         PyBodensee. </p>
                 </div>
             </div>
@@ -68,8 +69,7 @@
                         <div class="badge bg-primary bg-gradient rounded-pill mb-2">Meetup</div>
                         <a class="text-decoration-none link-dark stretched-link"
                             href="{{meta.URL}}/meetups/{{meetup.slug}}/">
-                            <h5 class="card-title mb-3">Meetup # {{meetup.id}} -
-                                {{meetup.title}}
+                            <h5 class="card-title mb-3"> {{meetup.title}}
                             </h5>
                         </a>
                         <p class="card-text mb-0">Agenda: {{meetup.description}}</p>
