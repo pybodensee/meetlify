@@ -30,7 +30,7 @@ Create an empty folder on your computer or move to a desired location where you 
 
 ### Using Application Programming Interface (API)
 
-You can embed ```meetilify`` into your existing workflow easily. Here is a sample snippet.
+You can embed ``meetilify`` into your existing workflow easily. Here is a sample snippet.
 
 ```python
 from pathlib import Path
