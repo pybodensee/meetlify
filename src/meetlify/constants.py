@@ -32,6 +32,12 @@ SOFTWARE.
 
 
 # +++++++++++++++++++++++++++++++++++++++++++++++++++++
+# STANDARD LIBARY IMPORTS
+# +++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+from enum import Enum
+
+# +++++++++++++++++++++++++++++++++++++++++++++++++++++
 # DATABASE/CONSTANTS LIST
 # +++++++++++++++++++++++++++++++++++++++++++++++++++++
 
@@ -40,3 +46,20 @@ VERSION_MINOR = 1
 VERSION_REVISION = 4
 
 FULL_VERSION = f"{VERSION_MAJOR}.{VERSION_MINOR}.{VERSION_REVISION}"
+
+
+class ExtendedEnum(Enum):
+    """An extended enum class to convert list of items in an enumration."""
+
+    @classmethod
+    def list(cls):
+        return list(map(lambda c: c.value, cls))
+
+
+class STATUS(ExtendedEnum):
+    """An enum for the different Hostings."""
+
+    DRAFT = "draft"
+    PLANNING = "planning"
+    PROGRESS = "progress"
+    DONE = "done"

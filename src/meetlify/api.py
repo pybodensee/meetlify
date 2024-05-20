@@ -53,11 +53,11 @@ from jinja2 import Environment, FileSystemLoader
 # INTERNAL IMPORTS
 # +++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-
 from .configs import Configs
 from .page import Page
 from .meetup import Meetup
 from .sitemap import Sitemap
+from .constants import STATUS
 
 # +++++++++++++++++++++++++++++++++++++++++++++++++++++
 # IMPLEMENATIONS
@@ -123,7 +123,11 @@ class Meetlify:
             for mt in Path(self.dest, self.configs.folders.content, "meetups").iterdir()
             if mt.is_file() and mt.suffix == ".md"
         ]
-        self.meetups = [mt for mt in self.meetups if mt.status in ["open", "close"]]
+        self.meetups = [
+            mt
+            for mt in self.meetups
+            if mt.status in [STATUS.PROGRESS.value, STATUS.DONE.value]
+        ]
         self.meetups = sorted(self.meetups, key=lambda x: x.id, reverse=True)
 
         self.sitemaps.append(
