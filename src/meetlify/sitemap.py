@@ -5,7 +5,7 @@ Meetlify: Static Site Generator for Meetup Websites
 A Python Package for Generating Static Website for Meetups.
 https://github.com/pybodensee/meetlify
 
-    src\meetlify\page.py
+    src\meetlify\sitemap.py
 
     Copyright (C) 2024-2024 Faisal Shahzad <info@serpwings.com>
 
@@ -34,16 +34,8 @@ SOFTWARE.
 # STANDARD LIBARY IMPORTS
 # +++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-import codecs
 from dataclasses import dataclass
-from datetime import datetime, timezone
-from pathlib import Path
-
-# +++++++++++++++++++++++++++++++++++++++++++++++++++++
-# 3rd PARTY LIBRARY IMPORTS
-# +++++++++++++++++++++++++++++++++++++++++++++++++++++
-
-import markdown
+from datetime import datetime
 
 
 # +++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -52,41 +44,27 @@ import markdown
 
 
 @dataclass
-class Page:
-    """Page Data Class"""
+class Sitemap:
+    """Sitemap Data Class"""
 
-    title: float
-    date: str
-    modifieddate: str
-    author: str
+    name: str
     slug: str
-    status: str
-    description: str
-    content: str
+    modifieddate: str
+    items: list
 
     @classmethod
-    def from_markdown(cls, page_):
-        """Genreate Page Data Class from Markdown File
+    def from_dict(cls, object_):
+        """Genreate Sitemaps Class from object_ dictionary
 
         Args:
-            page_ (dict): Page as dict file
+            object_ (dict): Sitemap object_ as dictionary
 
         Returns:
-            Page: Return Constructed Page Object
+            Page: Return Constructed Sitemap Object
         """
-        _md = markdown.Markdown(extensions=["meta", "attr_list"])
-        with codecs.open(page_, "r", encoding="utf-8") as f:
-            data = f.read()
-
-            return cls(
-                content=_md.convert(data),
-                date="".join(_md.Meta["date"]),
-                modifieddate=datetime.fromtimestamp(
-                    Path(page_).stat().st_mtime, tz=timezone.utc
-                ),
-                author="".join(_md.Meta["author"]),
-                title="".join(_md.Meta["title"]),
-                description="".join(_md.Meta["description"]),
-                slug="".join(_md.Meta["slug"]),
-                status="".join(_md.Meta["status"]),
-            )
+        return cls(
+            name=object_["name"],
+            slug=object_["slug"],
+            modifieddate=datetime.now(),
+            items=object_["items"],
+        )

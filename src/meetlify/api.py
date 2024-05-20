@@ -38,6 +38,7 @@ SOFTWARE.
 import codecs
 import shutil
 from pathlib import Path
+from datetime import datetime
 
 
 # +++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -56,6 +57,7 @@ from jinja2 import Environment, FileSystemLoader
 from .configs import Configs
 from .page import Page
 from .meetup import Meetup
+from .sitemap import Sitemap
 
 # +++++++++++++++++++++++++++++++++++++++++++++++++++++
 # IMPLEMENATIONS
@@ -78,6 +80,8 @@ class Meetlify:
             )
         )
         self.meetups = []
+        self.pages = []
+        self.sitemaps = []
 
     def setup(self) -> None:
         """Setup Current Folder for Meetlify Website."""
@@ -122,6 +126,37 @@ class Meetlify:
         self.meetups = [mt for mt in self.meetups if mt.status in ["open", "close"]]
         self.meetups = sorted(self.meetups, key=lambda x: x.id, reverse=True)
 
+        self.sitemaps.append(
+            Sitemap.from_dict(
+                {
+                    "name": "meetups",
+                    "slug": "/meetups/",
+                    "modifieddate": datetime.now(),
+                    "items": self.meetups,
+                }
+            )
+        )
+
+    def parse_pages(self):
+        """Parse Pages avaialable as Markdown"""
+
+        self.pages = [
+            Page.from_markdown(mt)
+            for mt in Path(self.dest, self.configs.folders.content, "pages").iterdir()
+            if mt.is_file() and mt.name in ["privacy.md", "terms.md", "contact.md"]
+        ]
+
+        self.sitemaps.append(
+            Sitemap.from_dict(
+                {
+                    "name": "pages",
+                    "slug": "/",
+                    "modifieddate": datetime.now(),
+                    "items": self.pages,
+                }
+            )
+        )
+
     def render_home(self):
         """Render home page"""
         with codecs.open(
@@ -153,39 +188,6 @@ class Meetlify:
             )
             print("... wrote output/home")
 
-    def render_pages(self):
-        """Render permanent pages"""
-
-        for _page in ["privacy", "terms", "contact"]:
-            _page_content = Page.from_markdown(
-                Path(
-                    self.dest,
-                    self.configs.folders.content,
-                    "pages",
-                    f"{_page}.md",
-                )
-            )
-
-            Path(self.dest, self.configs.folders.output, _page).mkdir(
-                parents=True, exist_ok=True
-            )
-
-            with open(
-                Path(self.dest, self.configs.folders.output, _page, "index.html"),
-                mode="w",
-                encoding="utf-8",
-            ) as file:
-                file.write(
-                    self.renderer.get_template("page.html").render(
-                        meta=self.configs, front=_page_content
-                    )
-                )
-                print(f"... wrote output/{_page}")
-
-    def render_meetups(self):
-        """Render meetup pages and Meetup index page"""
-
-        # TODO: Check if there are less than 3 meetups and runs without error? make 3 config variable
         with open(
             Path(self.dest, self.configs.folders.output, "404.html"),
             mode="w",
@@ -198,6 +200,68 @@ class Meetlify:
             )
             print("... wrote output/404")
 
+    def render_pages(self):
+        """Render permanent pages"""
+
+        for _page in self.pages:
+            Path(self.dest, self.configs.folders.output, _page.slug).mkdir(
+                parents=True, exist_ok=True
+            )
+
+            with open(
+                Path(self.dest, self.configs.folders.output, _page.slug, "index.html"),
+                mode="w",
+                encoding="utf-8",
+            ) as file:
+                file.write(
+                    self.renderer.get_template("page.html").render(
+                        meta=self.configs, front=_page
+                    )
+                )
+                print(f"... wrote output/{_page.slug}")
+
+    def render_sitemaps(self):
+        """Render Sitemaps"""
+
+        for sitemap in self.sitemaps:
+            with open(
+                Path(
+                    self.dest,
+                    self.configs.folders.output,
+                    f"sitemap-{sitemap.name}.xml",
+                ),
+                mode="w",
+                encoding="utf-8",
+            ) as file:
+                file.write(
+                    self.renderer.get_template("sitemap.xml").render(
+                        meta=self.configs,
+                        category=sitemap.slug,
+                        items=sitemap.items,
+                    )
+                )
+                print(f"... wrote output/{sitemap.name}/sitemap")
+
+        with open(
+            Path(
+                self.dest,
+                self.configs.folders.output,
+                "sitemap-index.xml",
+            ),
+            mode="w",
+            encoding="utf-8",
+        ) as file:
+            file.write(
+                self.renderer.get_template("sitemap-index.xml").render(
+                    meta=self.configs, sitemaps=self.sitemaps
+                )
+            )
+            print("... wrote output/sitemap-index")
+
+    def render_meetups(self):
+        """Render meetup pages and Meetup index page"""
+
+        # TODO: Check if there are less than 3 meetups and runs without error? make 3 config variable
         for _meetup in self.meetups:
             Path(self.dest, self.configs.folders.output, "meetups", _meetup.slug).mkdir(
                 parents=True, exist_ok=True
@@ -279,7 +343,9 @@ class Meetlify:
         """Make Static Site and Save to Output folder"""
 
         self.parse_meetups()
+        self.parse_pages()
         self.render_home()
         self.render_meetups()
         self.render_pages()
+        self.render_sitemaps()
         self.copy_assests()

@@ -37,7 +37,8 @@ SOFTWARE.
 
 import codecs
 from dataclasses import dataclass
-
+from pathlib import Path
+from datetime import datetime, timezone 
 
 # +++++++++++++++++++++++++++++++++++++++++++++++++++++
 # 3rd PARTY LIBRARY IMPORTS
@@ -58,7 +59,8 @@ class Meetup:
 
     id: str
     title: float
-    date: int
+    date: str
+    modifieddate: str
     author: str
     slug: str
     status: str
@@ -88,10 +90,14 @@ class Meetup:
                 else slugify("".join(_md.Meta["title"]))
             )
 
+
             return cls(
                 content=content_,
                 id="".join(_md.Meta["id"]),
                 date="".join(_md.Meta["date"]),
+                modifieddate=datetime.fromtimestamp(
+                    Path(meetup_).stat().st_mtime, tz=timezone.utc
+                ),
                 author="".join(_md.Meta["author"]),
                 title="".join(_md.Meta["title"]),
                 description="".join(_md.Meta["description"]),
