@@ -5,6 +5,9 @@
 <meta name="author" content="{{front.author}}" />
 <link href="{{meta.URL}}/{{front.slug}}/" rel="canonical" />
 <title>{{front.title}}</title>
+<meta content="{{front.title}}" property="og:title" />
+<meta content="{{front.description}}" property="og:description" />
+<meta content="{{meta.URL}}/{{front.slug}}/" property="og:url" />
 {% endblock main_header %}
 
 {% block main_content %}

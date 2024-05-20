@@ -1,56 +1,31 @@
-/*
- * Bootstrap Cookie Alert by Wruczek
- * https://github.com/Wruczek/Bootstrap-Cookie-Alert
- * Released under MIT license
- */
-(function () {
-    "use strict";
+// https://github.com/kolappannathan/bootstrap-cookie-banner
 
-    var cookieAlert = document.querySelector(".cookiealert");
-    var acceptCookies = document.querySelector(".acceptcookies");
+/* Javascript to show and hide cookie banner using localstorage */
+/* Shows the Cookie banner */
+function showCookieBanner() {
+    let cookieBanner = document.getElementById("cb-cookie-banner");
+    cookieBanner.style.display = "block";
+}
 
-    if (!cookieAlert) {
-       return;
+/* Hides the Cookie banner and saves the value to localstorage */
+function hideCookieBanner() {
+    localStorage.setItem("cb_isCookieAccepted", "yes");
+    let cookieBanner = document.getElementById("cb-cookie-banner");
+    cookieBanner.style.display = "none";
+}
+
+/* Checks the localstorage and shows Cookie banner based on it. */
+function initializeCookieBanner() {
+    let isCookieAccepted = localStorage.getItem("cb_isCookieAccepted");
+    if (isCookieAccepted === null) {
+        localStorage.setItem("cb_isCookieAccepted", "no");
+        showCookieBanner();
     }
-
-    cookieAlert.offsetHeight; // Force browser to trigger reflow (https://stackoverflow.com/a/39451131)
-
-    // Show the alert if we cant find the "acceptCookies" cookie
-    if (!getCookie("acceptCookies")) {
-        cookieAlert.classList.add("show");
+    if (isCookieAccepted === "no") {
+        showCookieBanner();
     }
+}
 
-    // When clicking on the agree button, create a 1 year
-    // cookie to remember user's choice and close the banner
-    acceptCookies.addEventListener("click", function () {
-        setCookie("acceptCookies", true, 365);
-        cookieAlert.classList.remove("show");
-
-        // dispatch the accept event
-        window.dispatchEvent(new Event("cookieAlertAccept"))
-    });
-
-    // Cookie functions from w3schools
-    function setCookie(cname, cvalue, exdays) {
-        var d = new Date();
-        d.setTime(d.getTime() + (exdays * 24 * 60 * 60 * 1000));
-        var expires = "expires=" + d.toUTCString();
-        document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
-    }
-
-    function getCookie(cname) {
-        var name = cname + "=";
-        var decodedCookie = decodeURIComponent(document.cookie);
-        var ca = decodedCookie.split(';');
-        for (var i = 0; i < ca.length; i++) {
-            var c = ca[i];
-            while (c.charAt(0) === ' ') {
-                c = c.substring(1);
-            }
-            if (c.indexOf(name) === 0) {
-                return c.substring(name.length, c.length);
-            }
-        }
-        return "";
-    }
-})();
+// Assigning values to window object
+window.onload = initializeCookieBanner();
+window.cb_hideCookieBanner = hideCookieBanner;

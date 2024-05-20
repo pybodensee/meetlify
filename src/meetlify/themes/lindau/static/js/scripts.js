@@ -28,5 +28,3 @@ try {
         .addEventListener("submit", handleSubmit);
 } catch (error) {
 }
-
-

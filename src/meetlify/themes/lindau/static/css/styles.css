@@ -12638,6 +12638,15 @@ html {
   top: 0;
 }
 
+.footer {
+  --bs-text-opacity: 1;
+  font-weight: 400 !important;
+  margin-bottom: 1.15rem !important;
+  font-size: 1.15rem;
+  margin-top: 0;
+  margin-bottom: 1rem;
+}
+
 p,
 ul {
   --bs-text-opacity: 1;
