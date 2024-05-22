@@ -55,6 +55,7 @@ from jinja2 import Environment, FileSystemLoader
 
 
 from .configs import Configs
+from .post import Post
 from .page import Page
 from .meetup import Meetup
 from .sitemap import Sitemap
@@ -80,6 +81,7 @@ class Meetlify:
             )
         )
         self.meetups = []
+        self.posts = []
         self.pages = []
         self.sitemaps = []
 
@@ -153,6 +155,26 @@ class Meetlify:
                     "slug": "/",
                     "modifieddate": datetime.now(),
                     "items": self.pages,
+                }
+            )
+        )
+    
+    def parse_posts(self):
+        """Parse Posts avaialable as Markdown"""
+
+        self.posts = [
+            Post.from_markdown(mt)
+            for mt in Path(self.dest, self.configs.folders.content, "posts").iterdir()
+            if mt.is_file() and mt.suffix == ".md"
+        ]
+
+        self.posts.append(
+            Sitemap.from_dict(
+                {
+                    "name": "posts",
+                    "slug": "/",
+                    "modifieddate": datetime.now(),
+                    "items": self.posts,
                 }
             )
         )
