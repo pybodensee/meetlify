@@ -47,6 +47,12 @@ import markdown
 
 
 # +++++++++++++++++++++++++++++++++++++++++++++++++++++
+# INTERNAL IMPORTS
+# +++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+from .utils import get_slug
+
+# +++++++++++++++++++++++++++++++++++++++++++++++++++++
 # IMPLEMENATIONS
 # +++++++++++++++++++++++++++++++++++++++++++++++++++++
 
@@ -58,11 +64,14 @@ class Post:
     title: str
     date: str
     modifieddate: str
+    featureimage: str
     author: str
     slug: str
     status: str
     tags: str
+    admonition: str
     description: str
+    toc: str
     content: str
 
     @classmethod
@@ -75,12 +84,13 @@ class Post:
         Returns:
             Post: Return Constructed Post Object
         """
-        _md = markdown.Markdown(extensions=["meta", "attr_list"])
+        _md = markdown.Markdown(extensions=["meta", "attr_list", "toc"])
         with codecs.open(page_, "r", encoding="utf-8") as f:
             data = f.read()
+            content_ = _md.convert(data)
 
             return cls(
-                content=_md.convert(data),
+                content=content_,
                 date="".join(_md.Meta["date"]),
                 modifieddate=datetime.fromtimestamp(
                     Path(page_).stat().st_mtime, tz=timezone.utc
@@ -88,7 +98,12 @@ class Post:
                 author="".join(_md.Meta["author"]),
                 title="".join(_md.Meta["title"]),
                 description="".join(_md.Meta["description"]),
-                slug="".join(_md.Meta["slug"]),
+                slug=get_slug(
+                    _md.Meta["slug"] if "slug" in _md.Meta else [""], _md.Meta["title"]
+                ),
                 tags=_md.Meta["tags"],
+                admonition=_md.Meta["admonition"],
+                featureimage="".join(_md.Meta["featureimage"]),
+                toc=_md.toc,
                 status="".join(_md.Meta["status"]),
             )

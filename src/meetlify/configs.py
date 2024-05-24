@@ -62,6 +62,7 @@ class Folders:
     content: str
     meetups: str
     pages: str
+    posts: str
 
 
 @dataclass

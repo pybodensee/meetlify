@@ -128,7 +128,7 @@ class Meetlify:
         self.meetups = [
             mt
             for mt in self.meetups
-            if mt.status in [STATUS.PROGRESS.value, STATUS.DONE.value]
+            if mt.status in [STATUS.PUBLISHED.value, STATUS.DONE.value]
         ]
         self.meetups = sorted(self.meetups, key=lambda x: x.id, reverse=True)
 
@@ -162,7 +162,7 @@ class Meetlify:
                 }
             )
         )
-    
+
     def parse_posts(self):
         """Parse Posts avaialable as Markdown"""
 
@@ -172,7 +172,7 @@ class Meetlify:
             if mt.is_file() and mt.suffix == ".md"
         ]
 
-        self.posts.append(
+        self.sitemaps.append(
             Sitemap.from_dict(
                 {
                     "name": "posts",
@@ -210,6 +210,7 @@ class Meetlify:
                     meta=self.configs,
                     home_content="".join(home_content),
                     meetups=self.meetups[0:3],
+                    posts=self.posts[0:3],
                 )
             )
             print("... wrote output/home")
@@ -311,7 +312,7 @@ class Meetlify:
                         front=_meetup,
                     )
                 )
-                print(f"... wrote output/meetups/{_meetup.slug}")
+                print(f"...... wrote output/meetups/{_meetup.slug}")
 
         # save meetup index page
         with open(
@@ -325,6 +326,55 @@ class Meetlify:
                 )
             )
             print("... wrote output/meetups")
+
+    def render_posts(self):
+        """Render posts and Meetup index page"""
+
+        # TODO: Check if there are less than 3 meetups and runs without error? make 3 config variable
+        for _post in self.posts:
+            Path(self.dest, self.configs.folders.output, "posts", _post.slug).mkdir(
+                parents=True, exist_ok=True
+            )
+
+            _admonition = {
+                "type": "hint",
+                "title": "Update",
+                "message": "This is work in progress. Please checkback later for an updated version of this post.",
+            }
+
+            with open(
+                Path(
+                    self.dest,
+                    self.configs.folders.output,
+                    "posts",
+                    _post.slug,
+                    "index.html",
+                ),
+                mode="w",
+                encoding="utf-8",
+            ) as file:
+                file.write(
+                    self.renderer.get_template("post.html").render(
+                        meta=self.configs,
+                        content=_post.content,
+                        front=_post,
+                        admonition=_admonition,
+                    )
+                )
+                print(f"...... wrote output/posts/{_post.slug}")
+
+        # save meetup index page
+        with open(
+            Path(self.dest, self.configs.folders.output, "posts", "index.html"),
+            mode="w",
+            encoding="utf-8",
+        ) as file:
+            file.write(
+                self.renderer.get_template("posts.html").render(
+                    meta=self.configs, posts=self.posts
+                )
+            )
+            print("... wrote output/posts")
 
     def copy_assests(self):
         """Copy Assets e.g. Static Folders, Images, Feeds, and Sitemaps"""
@@ -370,8 +420,10 @@ class Meetlify:
 
         self.parse_meetups()
         self.parse_pages()
+        self.parse_posts()
         self.render_home()
         self.render_meetups()
+        self.render_posts()
         self.render_pages()
         self.render_sitemaps()
         self.copy_assests()

@@ -86,9 +86,10 @@ def clean():
 @click.option("--meetups/--no-meetups", default=False)
 @click.option("--home/--no-home", default=False)
 @click.option("--pages/--no-pages", default=False)
+@click.option("--posts/--no-posts", default=False)
 @click.option("--assets/--no-assets", default=False)
 @click.option("--sitemap/--no-sitemap", default=False)
-def make(meetups, home, pages, assets, sitemap):
+def make(meetups, home, pages, posts, assets, sitemap):
     click.echo("Make Current Project")
     _mlfy = Meetlify(dest_=Path(os.getcwd()))
 
@@ -104,6 +105,10 @@ def make(meetups, home, pages, assets, sitemap):
         _mlfy.parse_pages()
         _mlfy.render_pages()
 
+    if posts:
+        _mlfy.parse_posts()
+        # _mlfy.render_()
+
     if assets:
         _mlfy.copy_assests()
 
@@ -112,5 +117,5 @@ def make(meetups, home, pages, assets, sitemap):
         _mlfy.parse_pages()
         _mlfy.render_sitemaps()
 
-    if not any([meetups, home, pages, assets, sitemap]):
+    if not any([meetups, home, pages, posts, assets, sitemap]):
         _mlfy.make()

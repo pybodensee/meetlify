@@ -38,14 +38,20 @@ SOFTWARE.
 import codecs
 from dataclasses import dataclass
 from pathlib import Path
-from datetime import datetime, timezone 
+from datetime import datetime, timezone
 
 # +++++++++++++++++++++++++++++++++++++++++++++++++++++
 # 3rd PARTY LIBRARY IMPORTS
 # +++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 import markdown
-from slugify import slugify
+
+
+# +++++++++++++++++++++++++++++++++++++++++++++++++++++
+# INTERNAL IMPORTS
+# +++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+from .utils import get_slug
 
 
 # +++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -84,13 +90,6 @@ class Meetup:
             data = f.read()
             content_ = _md.convert(data)
 
-            slug_ = (
-                "".join(_md.Meta["slug"])
-                if _md.Meta.get("slug")
-                else slugify("".join(_md.Meta["title"]))
-            )
-
-
             return cls(
                 content=content_,
                 id="".join(_md.Meta["id"]),
@@ -101,7 +100,9 @@ class Meetup:
                 author="".join(_md.Meta["author"]),
                 title="".join(_md.Meta["title"]),
                 description="".join(_md.Meta["description"]),
-                slug=slug_,
+                slug=get_slug(
+                    _md.Meta["slug"] if "slug" in _md.Meta else [""], _md.Meta["title"]
+                ),
                 featureimage="".join(_md.Meta["featureimage"]),
                 address="".join(_md.Meta["address"]),
                 status="".join(_md.Meta["status"]),

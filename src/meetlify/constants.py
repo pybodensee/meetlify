@@ -61,5 +61,13 @@ class STATUS(ExtendedEnum):
 
     DRAFT = "draft"
     PLANNING = "planning"
-    PROGRESS = "progress"
+    PUBLISHED = "published"
     DONE = "done"
+
+
+class ADMONITION(ExtendedEnum):
+    """An enum for the different Admonitions."""
+
+    DRAFT = "draft"
+    INCOMPLETE = "incomplete"
+    COMPLETE = "complete"

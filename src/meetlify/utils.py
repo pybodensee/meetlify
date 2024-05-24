@@ -39,6 +39,13 @@ import shutil
 
 
 # +++++++++++++++++++++++++++++++++++++++++++++++++++++
+# 3rd PARTY LIBRARY IMPORTS
+# +++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+from slugify import slugify
+
+
+# +++++++++++++++++++++++++++++++++++++++++++++++++++++
 # IMPLEMENATIONS
 # +++++++++++++++++++++++++++++++++++++++++++++++++++++
 
@@ -56,3 +63,11 @@ def initialize(dest_: Path) -> None:
         Path(Path(__file__).resolve().parent, "share", "configs.json"),
         Path(dest_, "configs.json"),
     )
+
+
+def get_slug(slug_, title_):
+    # slug_ = "".join(_md.Meta["slug"])
+    # slug_ = slugify("".join(_md.Meta["title"])) if not slug_ else slug_
+
+    slug_ = "".join(slug_)
+    return slugify("".join(title_)) if not slug_ else slug_
