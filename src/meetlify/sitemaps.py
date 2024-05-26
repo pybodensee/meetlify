@@ -36,6 +36,7 @@ SOFTWARE.
 
 from dataclasses import dataclass
 from datetime import datetime
+from typing import Self
 
 # +++++++++++++++++++++++++++++++++++++++++++++++++++++
 # INTERNAL IMPORTS
@@ -60,7 +61,7 @@ class Sitemap:
     status: STATUS
 
     @classmethod
-    def from_dict(cls, object_: dict):
+    def from_dict(cls, object_: dict) -> Self:
         return cls(
             name=object_.get("name"),
             slug=object_.get("slug"),

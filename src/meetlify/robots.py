@@ -38,6 +38,7 @@ import json
 import codecs
 from pathlib import Path
 from dataclasses import dataclass
+from typing import Self
 
 # +++++++++++++++++++++++++++++++++++++++++++++++++++++
 # IMPLEMENATIONS
@@ -51,7 +52,6 @@ class RobotAgent:
     disallow: list[str]
 
     def __str__(self) -> str:
-
         allows = "\nAllow: " if self.allow else ""
         allows += "\nAllow: ".join(self.allow)
 
@@ -61,12 +61,8 @@ class RobotAgent:
         return f"User-agent: {self.name}{allows}{disallows}\n\n"
 
     @classmethod
-    def from_dict(cls, object_: dict):
-        return cls(
-            name=object_.get("name"),
-            allow=object_.get("allow"),
-            disallow=object_.get("disallow"),
-        )
+    def from_dict(cls, object_: dict) -> Self:
+        return cls(**object_)
 
 
 class Robots:
@@ -95,8 +91,8 @@ class Robots:
         )
 
     @classmethod
-    def from_json(cls, json_file_: Path):
+    def from_json(cls, json_file_: Path) -> Self:
         assert isinstance(json_file_, Path)
         assert json_file_.exists()
-        with codecs.open(json_file_, "r", encoding="utf-8") as f:
+        with codecs.open(str(json_file_), "r", encoding="utf-8") as f:
             return cls(robots_items_=json.load(f))

@@ -51,7 +51,7 @@ from src.meetlify import __version__
 # DATABASE/CONSTANTS LIST
 # +++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-python_minor_min = 8
+python_minor_min = 11
 python_minor_max = 12
 confirmed_python_versions = [
     "Programming Language :: Python :: 3.{MINOR:d}".format(MINOR=minor)

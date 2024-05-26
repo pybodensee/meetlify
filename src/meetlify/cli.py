@@ -36,6 +36,8 @@ SOFTWARE.
 # +++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 import os
+import logging
+
 from pathlib import Path
 
 
@@ -57,6 +59,11 @@ from .utils import initialize
 # +++++++++++++++++++++++++++++++++++++++++++++++++++++
 # IMPLEMENATIONS
 # +++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+logging.basicConfig(
+    level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
+)
+logging.getLogger("meetlify").propagate = True
 
 
 @click.group()
@@ -91,25 +98,36 @@ def clean():
 @click.option("--sitemap/--no-sitemap", default=False)
 def make(meetups, home, pages, posts, assets, sitemap):
     click.echo("Make Current Project")
-    _mlfy = Meetlify(dest_=Path(os.getcwd()))
-
-    if meetups:
-        _mlfy.render_meetups()
+    mtlfy = Meetlify(dest_=Path(os.getcwd()))
 
     if home:
-        _mlfy.render_home()
+        mtlfy.render_home()
+        mtlfy.render_404_page()
+
+    if meetups:
+        mtlfy.render_meetups()
 
     if pages:
-        _mlfy.render_pages()
+        mtlfy.render_pages()
 
     if posts:
-        _mlfy.render_posts()
-
-    if assets:
-        _mlfy.copy_assests()
+        mtlfy.render_posts()
 
     if sitemap:
-        _mlfy.render_sitemaps()
+        mtlfy.render_redirects()
+        mtlfy.render_robots_txt()
+        mtlfy.render_sitemaps()
+
+    if assets:
+        mtlfy.copy_assests()
 
     if not any([meetups, home, pages, posts, assets, sitemap]):
-        _mlfy.make()
+        mtlfy.render_home()
+        mtlfy.render_404_page()
+        mtlfy.render_meetups()
+        mtlfy.render_posts()
+        mtlfy.render_pages()
+        mtlfy.render_redirects()
+        mtlfy.render_sitemaps()
+        mtlfy.render_robots_txt()
+        mtlfy.copy_assests()

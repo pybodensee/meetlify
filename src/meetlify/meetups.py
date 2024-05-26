@@ -38,6 +38,8 @@ SOFTWARE.
 from pathlib import Path
 from dataclasses import dataclass
 from datetime import datetime, timezone
+from typing import Self
+
 
 # +++++++++++++++++++++++++++++++++++++++++++++++++++++
 # 3rd PARTY LIBRARY IMPORTS
@@ -72,11 +74,11 @@ class Meetup:
     add_to_sitemap: bool
     status: str  # TODO: replace with STATUS ENUM
 
-    def __lt__(self, other_):
+    def __lt__(self, other_: Self) -> bool:
         return self.event_datetime < other_.event_datetime
 
     @classmethod
-    def from_markdown(cls, meetup_md_: Path):
+    def from_markdown(cls, meetup_md_: Path) -> Self:
         meta, toc, content = markdown_convertor(meetup_md_)
         return cls(
             title=meta.get("title"),

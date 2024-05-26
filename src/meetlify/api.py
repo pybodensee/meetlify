@@ -36,6 +36,7 @@ SOFTWARE.
 # +++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 import shutil
+import logging
 from pathlib import Path
 
 
@@ -62,6 +63,8 @@ from .constants import STATUS
 # +++++++++++++++++++++++++++++++++++++++++++++++++++++
 # IMPLEMENATIONS
 # +++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+logging.getLogger("meetlify").addHandler(logging.NullHandler())
 
 
 class Meetlify:
@@ -166,7 +169,7 @@ class Meetlify:
                     posts=self.posts[STATUS.PUBLISHED, STATUS.DONE][0:3],
                 )
             )
-            print("... wrote output/home")
+            logging.info("... wrote output/home")
 
     def render_404_page(self):
         with open(
@@ -181,7 +184,7 @@ class Meetlify:
                     posts=self.posts[STATUS.PUBLISHED, STATUS.DONE][0:3],
                 )
             )
-            print("... wrote output/404")
+            logging.info("... wrote output/404")
 
     def render_meetups(self):
         """Render meetup pages and Meetup index page"""
@@ -212,7 +215,7 @@ class Meetlify:
                         meetup=meetup,
                     )
                 )
-                print(f"...... wrote output/meetups/{meetup.slug}")
+                logging.info(f"...... wrote output/meetups/{meetup.slug}")
 
         # save meetup index page
         with open(
@@ -231,7 +234,7 @@ class Meetlify:
                     meetups=self.meetups[STATUS.PUBLISHED, STATUS.DONE],
                 )
             )
-            print("... wrote output/meetups")
+            logging.info("... wrote output/meetups")
 
     def render_posts(self):
         """Render posts and Meetup index page"""
@@ -263,7 +266,7 @@ class Meetlify:
                         banner=self.configs.get_banner(banner_name=post.banner),
                     )
                 )
-                print(f"...... wrote output/posts/{post.slug}")
+                logging.info(f"...... wrote output/posts/{post.slug}")
 
         # save meetup index page
         with open(
@@ -281,7 +284,7 @@ class Meetlify:
                     meta=self.configs, posts=self.posts[STATUS.PUBLISHED, STATUS.DONE]
                 )
             )
-            print("... wrote output/posts")
+            logging.info("... wrote output/posts")
 
     def render_pages(self):
         """Render permanent pages"""
@@ -301,7 +304,7 @@ class Meetlify:
                         meta=self.configs, page=page
                     )
                 )
-                print(f"... wrote output/{page.slug}")
+                logging.info(f"... wrote output/{page.slug}")
 
     def render_sitemaps(self):
         """Render Sitemaps"""
@@ -321,7 +324,7 @@ class Meetlify:
                         meta=self.configs, sitemap=sitemap
                     )
                 )
-                print(f"... wrote output/{sitemap.name}/sitemap")
+                logging.info(f"... wrote output/{sitemap.name}/sitemap")
 
         with open(
             Path(
@@ -337,7 +340,7 @@ class Meetlify:
                     meta=self.configs, sitemaps=self.sitemaps[STATUS.PUBLISHED]
                 )
             )
-            print("... wrote output/sitemap-index")
+            logging.info("... wrote output/sitemap-index")
 
     def render_redirects(self):
         with open(
@@ -350,7 +353,7 @@ class Meetlify:
             encoding="utf-8",
         ) as file:
             file.write(str(self.redirects))
-            print("... wrote output/redirects file")
+            logging.info("... wrote output/redirects file")
 
     def render_robots_txt(self):
         if self.configs.robots:
@@ -364,7 +367,7 @@ class Meetlify:
                 encoding="utf-8",
             ) as file:
                 file.write(str(self.robots))
-                print("... wrote output/robots.txt file")
+                logging.info("... wrote output/robots.txt file")
 
     def copy_assests(self):
         # copy static folders
@@ -377,7 +380,7 @@ class Meetlify:
             ),
             dirs_exist_ok=True,
         )
-        print("... copied output/themes static folder")
+        logging.info("... copied output/themes static folder")
 
         # copy images folder
         shutil.copytree(
@@ -389,7 +392,7 @@ class Meetlify:
             ),
             dirs_exist_ok=True,
         )
-        print("... copied output/images folder")
+        logging.info("... copied output/images folder")
 
     def make(self):
         self.render_home()
