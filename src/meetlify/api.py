@@ -53,6 +53,7 @@ from jinja2 import Environment, FileSystemLoader
 
 from .configs import Configs
 from .posts import Posts
+from .categories import Categories
 from .pages import Pages
 from .meetups import Meetups
 from .sitemaps import Sitemaps
@@ -104,6 +105,13 @@ class Meetlify:
             reverse_=True,
         )
 
+        self.categories = Categories(
+            path_=Path(
+                self.dest, self.configs.folders.content, self.configs.folders.categories
+            ),
+            reverse_=True,
+        )
+
         self.pages = Pages(
             path_=Path(
                 self.dest, self.configs.folders.content, self.configs.folders.pages
@@ -118,6 +126,10 @@ class Meetlify:
                     "items": self.meetups[STATUS.PUBLISHED, STATUS.DONE],
                 },
                 {"name": "posts", "items": self.posts[STATUS.PUBLISHED, STATUS.DONE]},
+                {
+                    "name": "categories",
+                    "items": self.categories[STATUS.PUBLISHED, STATUS.DONE],
+                },
                 {"name": "pages", "items": self.pages[STATUS.PUBLISHED, STATUS.DONE]},
             ]
         )
@@ -167,6 +179,7 @@ class Meetlify:
                     about_us_paragraphs=self.configs.about_us,
                     meetups=self.meetups[STATUS.PUBLISHED, STATUS.DONE][0:3],
                     posts=self.posts[STATUS.PUBLISHED, STATUS.DONE][0:3],
+                    categories=self.categories[STATUS.PUBLISHED, STATUS.DONE][0:8],
                 )
             )
             logging.info("... wrote output/home")
@@ -182,6 +195,7 @@ class Meetlify:
                     meta=self.configs,
                     meetups=self.meetups[STATUS.PUBLISHED, STATUS.DONE][0:3],
                     posts=self.posts[STATUS.PUBLISHED, STATUS.DONE][0:3],
+                    categories=self.categories[STATUS.PUBLISHED, STATUS.DONE][0:3],
                 )
             )
             logging.info("... wrote output/404")
@@ -285,6 +299,57 @@ class Meetlify:
                 )
             )
             logging.info("... wrote output/posts")
+
+    def render_categories(self):
+        """Render categoires and categoires index page"""
+
+        # TODO: Check if there are less than 3 posts  and runs without error? make 3 config variable
+        for category in self.categories[STATUS.PUBLISHED, STATUS.DONE]:
+            Path(
+                self.dest,
+                self.configs.folders.output,
+                self.configs.folders.categories,
+                category.slug,
+            ).mkdir(parents=True, exist_ok=True)
+
+            with open(
+                Path(
+                    self.dest,
+                    self.configs.folders.output,
+                    self.configs.folders.categories,
+                    category.slug,
+                    "index.html",
+                ),
+                mode="w",
+                encoding="utf-8",
+            ) as file:
+                file.write(
+                    self.renderer.get_template("category.html").render(
+                        meta=self.configs,
+                        category=category,
+                        posts=self.posts.by_categories()[category.slug][0:3],
+                    )
+                )
+                logging.info(f"...... wrote output/categories/{category.slug}")
+
+        # save meetup index page
+        with open(
+            Path(
+                self.dest,
+                self.configs.folders.output,
+                self.configs.folders.categories,
+                "index.html",
+            ),
+            mode="w",
+            encoding="utf-8",
+        ) as file:
+            file.write(
+                self.renderer.get_template("categories.html").render(
+                    meta=self.configs,
+                    categories=self.categories[STATUS.PUBLISHED, STATUS.DONE],
+                )
+            )
+            logging.info("... wrote output/categories")
 
     def render_pages(self):
         """Render permanent pages"""
@@ -399,6 +464,7 @@ class Meetlify:
         self.render_404_page()
         self.render_meetups()
         self.render_posts()
+        self.render_categories()
         self.render_pages()
         self.render_redirects()
         self.render_sitemaps()

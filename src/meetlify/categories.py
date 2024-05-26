@@ -5,7 +5,7 @@ Meetlify: Static Site Generator for Meetup Websites
 A Python Package for Generating Static Website for Meetups.
 https://github.com/pybodensee/meetlify
 
-    src\meetlify\post.py
+    src\meetlify\categories.py
 
     Copyright (C) 2024-2024 Faisal Shahzad <info@serpwings.com>
 
@@ -34,9 +34,9 @@ SOFTWARE.
 # STANDARD LIBARY IMPORTS
 # +++++++++++++++++++++++++++++++++++++++++++++++++++++
 
+from pathlib import Path
 from dataclasses import dataclass
 from datetime import datetime, timezone
-from pathlib import Path
 
 # +++++++++++++++++++++++++++++++++++++++++++++++++++++
 # 3rd PARTY LIBRARY IMPORTS
@@ -44,13 +44,12 @@ from pathlib import Path
 
 from slugify import slugify
 
-
 # +++++++++++++++++++++++++++++++++++++++++++++++++++++
 # INTERNAL IMPORTS
 # +++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-from .constants import STATUS
 from .utils import markdown_convertor
+from .constants import STATUS
 
 # +++++++++++++++++++++++++++++++++++++++++++++++++++++
 # IMPLEMENATIONS
@@ -58,60 +57,52 @@ from .utils import markdown_convertor
 
 
 @dataclass
-class Post:
+class Category:
     title: str
     author: str
     description: str
+    slug: str
     create_date: datetime
     last_modified: datetime
     feature_image: str
-    slug: str
-    categories: list[str]
-    toc: str
     content: str
-    banner: str
     add_to_sitemap: bool
-    status: STATUS
+    status: str
 
     def __lt__(self, other_):
         return self.create_date < other_.create_date
 
     @classmethod
-    def from_markdown(cls, post_md_: Path):
-        meta, toc, content = markdown_convertor(post_md_)
+    def from_markdown(cls, category_md_: Path):
+        meta, toc, content = markdown_convertor(category_md_)
         return cls(
             title=meta.get("title"),
             author=meta.get("author"),
             description=meta.get("description"),
+            slug=meta.get("slug") or slugify(meta.get("title")),
             create_date=datetime.strptime(meta.get("create_date"), "%Y-%m-%d::%H:%M"),
             last_modified=datetime.fromtimestamp(
-                post_md_.stat().st_mtime, tz=timezone.utc
+                category_md_.stat().st_mtime, tz=timezone.utc
             ),
             feature_image=meta.get("feature_image"),
-            slug=meta.get("slug") or slugify(meta.get("title")),
-            categories=[
-                category.strip() for category in meta.get("categories").split(",")
-            ],
-            toc=toc,
             content=content,
-            banner=meta.get("banner"),
             add_to_sitemap=bool(meta.get("add_to_sitemap")),
             status=meta.get("status"),
         )
 
 
-class Posts:
+class Categories:
     def __init__(self, *, path_: Path, reverse_: bool = True) -> None:
         self.content = sorted(
             [
-                Post.from_markdown(post_md)
-                for post_md in path_.iterdir()
-                if post_md.is_file() and post_md.suffix == ".md"
+                Category.from_markdown(category_md)
+                for category_md in path_.iterdir()
+                if category_md.is_file() and category_md.suffix == ".md"
             ],
             reverse=reverse_,
         )
 
-    def __getitem__(self, status_: list[STATUS] | STATUS) -> list[Post]:
+    def __getitem__(self, status_: list[STATUS] | STATUS) -> list[Category]:
         if isinstance(status_, STATUS):
             status_ = [status_]
         return [
@@ -119,14 +110,3 @@ class Posts:
             for content in self.content
             if content.status in [stat.value for stat in status_]
         ]
-
-    def by_categories(self) -> dict:
-        category_order = dict()
-        for content in self.content:
-            for category in content.categories:
-                if category_order.get(category):
-                    category_order[category].append(content)
-                else:
-                    category_order[category] = [content]
-
-        return category_order

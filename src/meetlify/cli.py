@@ -126,6 +126,7 @@ def make(meetups, home, pages, posts, assets, sitemap):
         mtlfy.render_404_page()
         mtlfy.render_meetups()
         mtlfy.render_posts()
+        mtlfy.render_categories()
         mtlfy.render_pages()
         mtlfy.render_redirects()
         mtlfy.render_sitemaps()
