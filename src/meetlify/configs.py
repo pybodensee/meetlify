@@ -47,6 +47,15 @@ from dataclasses import dataclass
 
 
 @dataclass
+class Banner:
+    """Banner Data Class to hold Banners on Posts"""
+
+    name: str
+    type_: str
+    message: str
+
+
+@dataclass
 class Menu:
     """Menu Data Class to hold Header and footer menus"""
 
@@ -59,6 +68,8 @@ class Folders:
     """Folder data class for differnt types of folder used in Processing"""
 
     output: str
+    themes: str
+    images: str
     content: str
     meetups: str
     pages: str
@@ -86,38 +97,41 @@ class Configs:
     home: str
     folders: dict
     menu: Menu
+    about_us: list[str]
+    banners: list[Banner]
 
     @classmethod
     def from_json(cls, json_file_: Path):
-        """Generate Config data class from json file
-
-        Args:
-            json_file (Path): Json file containing Project Configurations
-
-        Returns:
-            Configs: Return Configs Data object
-        """
         assert isinstance(json_file_, Path)
         assert json_file_.exists()
 
         with codecs.open(json_file_, "r", encoding="utf-8") as f:
             cfgs = json.load(f)
             return cls(
-                name=cfgs["name"],
-                URL=cfgs["URL"],
-                language=cfgs["language"],
-                theme=cfgs["theme"],
-                title=cfgs["title"],
-                author=cfgs["author"],
-                email=cfgs["email"],
-                description=cfgs["description"],
-                sitemap=cfgs["sitemap"],
-                feeds=cfgs["feeds"],
-                robots=cfgs["robots"],
-                logo=cfgs["logo"],
-                favicon=cfgs["favicon"],
-                copyright=cfgs["copyright"],
-                home=cfgs["home"],
-                folders=Folders(**cfgs["folders"]),
-                menu=Menu(**cfgs["menu"]),
+                name=cfgs.get("name"),
+                URL=cfgs.get("URL"),
+                language=cfgs.get("language"),
+                theme=cfgs.get("theme"),
+                title=cfgs.get("title"),
+                author=cfgs.get("author"),
+                email=cfgs.get("email"),
+                description=cfgs.get("description"),
+                sitemap=cfgs.get("sitemap"),
+                feeds=cfgs.get("feeds"),
+                robots=cfgs.get("robots"),
+                logo=cfgs.get("logo"),
+                favicon=cfgs.get("favicon"),
+                copyright=cfgs.get("copyright"),
+                home=cfgs.get("home"),
+                folders=Folders(**cfgs.get("folders")),
+                menu=Menu(**cfgs.get("menu")),
+                about_us=cfgs.get("about_us"),
+                banners=[Banner(**banner) for banner in cfgs.get("banners")],
             )
+
+    def get_banner(self, banner_name: str) -> Banner:
+
+        return next(
+            (banner for banner in self.banners if banner.name == banner_name),
+            Banner(name=None, type_="", message=""),
+        )

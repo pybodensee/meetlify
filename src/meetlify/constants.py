@@ -65,8 +65,8 @@ class STATUS(ExtendedEnum):
     DONE = "done"
 
 
-class ADMONITION(ExtendedEnum):
-    """An enum for the different Admonitions."""
+class BANNER(ExtendedEnum):
+    """An enum for the different Banners."""
 
     DRAFT = "draft"
     INCOMPLETE = "incomplete"

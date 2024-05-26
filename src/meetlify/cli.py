@@ -94,27 +94,21 @@ def make(meetups, home, pages, posts, assets, sitemap):
     _mlfy = Meetlify(dest_=Path(os.getcwd()))
 
     if meetups:
-        _mlfy.parse_meetups()
         _mlfy.render_meetups()
 
     if home:
-        _mlfy.parse_meetups()
         _mlfy.render_home()
 
     if pages:
-        _mlfy.parse_pages()
         _mlfy.render_pages()
 
     if posts:
-        _mlfy.parse_posts()
-        # _mlfy.render_()
+        _mlfy.render_posts()
 
     if assets:
         _mlfy.copy_assests()
 
     if sitemap:
-        _mlfy.parse_meetups()
-        _mlfy.parse_pages()
         _mlfy.render_sitemaps()
 
     if not any([meetups, home, pages, posts, assets, sitemap]):

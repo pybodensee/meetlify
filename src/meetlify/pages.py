@@ -5,7 +5,7 @@ Meetlify: Static Site Generator for Meetup Websites
 A Python Package for Generating Static Website for Meetups.
 https://github.com/pybodensee/meetlify
 
-    src\meetlify\post.py
+    src\meetlify\page.py
 
     Copyright (C) 2024-2024 Faisal Shahzad <info@serpwings.com>
 
@@ -34,23 +34,22 @@ SOFTWARE.
 # STANDARD LIBARY IMPORTS
 # +++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-import codecs
+from pathlib import Path
 from dataclasses import dataclass
 from datetime import datetime, timezone
-from pathlib import Path
 
 # +++++++++++++++++++++++++++++++++++++++++++++++++++++
 # 3rd PARTY LIBRARY IMPORTS
 # +++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-import markdown
-
+from slugify import slugify
 
 # +++++++++++++++++++++++++++++++++++++++++++++++++++++
 # INTERNAL IMPORTS
 # +++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-from .utils import get_slug
+from .utils import markdown_convertor
+from .constants import STATUS
 
 # +++++++++++++++++++++++++++++++++++++++++++++++++++++
 # IMPLEMENATIONS
@@ -58,52 +57,56 @@ from .utils import get_slug
 
 
 @dataclass
-class Post:
-    """Post Data Class"""
-
+class Page:
     title: str
-    date: str
-    modifieddate: str
-    featureimage: str
     author: str
-    slug: str
-    status: str
-    tags: str
-    admonition: str
     description: str
+    slug: str
+    create_date: datetime
+    last_modified: datetime
     toc: str
     content: str
+    add_to_sitemap: bool
+    status: str
+
+    def __lt__(self, other_):
+        return self.create_date < other_.create_date
 
     @classmethod
-    def from_markdown(cls, page_):
-        """Genreate Post Data Class from Markdown File
+    def from_markdown(cls, page_md_: Path):
+        meta, toc, content = markdown_convertor(page_md_)
+        return cls(
+            title=meta.get("title"),
+            author=meta.get("author"),
+            description=meta.get("description"),
+            slug=meta.get("slug") or slugify(meta.get("title")),
+            create_date=datetime.strptime(meta.get("create_date"), "%Y-%m-%d::%H:%M"),
+            last_modified=datetime.fromtimestamp(
+                page_md_.stat().st_mtime, tz=timezone.utc
+            ),
+            toc=toc,
+            content=content,
+            add_to_sitemap=bool(meta.get("add_to_sitemap")),
+            status=meta.get("status"),
+        )
 
-        Args:
-            page_ (dict): Post as dict file
 
-        Returns:
-            Post: Return Constructed Post Object
-        """
-        _md = markdown.Markdown(extensions=["meta", "attr_list", "toc"])
-        with codecs.open(page_, "r", encoding="utf-8") as f:
-            data = f.read()
-            content_ = _md.convert(data)
+class Pages:
+    def __init__(self, *, path_: Path, reverse_: bool = True) -> None:
+        self.content = sorted(
+            [
+                Page.from_markdown(page_md)
+                for page_md in path_.iterdir()
+                if page_md.is_file() and page_md.suffix == ".md"
+            ],
+            reverse=reverse_,
+        )
 
-            return cls(
-                content=content_,
-                date="".join(_md.Meta["date"]),
-                modifieddate=datetime.fromtimestamp(
-                    Path(page_).stat().st_mtime, tz=timezone.utc
-                ),
-                author="".join(_md.Meta["author"]),
-                title="".join(_md.Meta["title"]),
-                description="".join(_md.Meta["description"]),
-                slug=get_slug(
-                    _md.Meta["slug"] if "slug" in _md.Meta else [""], _md.Meta["title"]
-                ),
-                tags=_md.Meta["tags"],
-                admonition=_md.Meta["admonition"],
-                featureimage="".join(_md.Meta["featureimage"]),
-                toc=_md.toc,
-                status="".join(_md.Meta["status"]),
-            )
+    def __getitem__(self, status_: list[STATUS] | STATUS) -> list[Page]:
+        if isinstance(status_, STATUS):
+            status_ = [status_]
+        return [
+            content
+            for content in self.content
+            if content.status in [stat.value for stat in status_]
+        ]

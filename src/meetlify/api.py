@@ -35,17 +35,14 @@ SOFTWARE.
 # STANDARD LIBARY IMPORTS
 # +++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-import codecs
 import shutil
 from pathlib import Path
-from datetime import datetime
 
 
 # +++++++++++++++++++++++++++++++++++++++++++++++++++++
 # 3rd PARTY LIBRARY IMPORTS
 # +++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-import markdown
 from jinja2 import Environment, FileSystemLoader
 
 
@@ -54,10 +51,12 @@ from jinja2 import Environment, FileSystemLoader
 # +++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 from .configs import Configs
-from .post import Post
-from .page import Page
-from .meetup import Meetup
-from .sitemap import Sitemap
+from .posts import Posts
+from .pages import Pages
+from .meetups import Meetups
+from .sitemaps import Sitemaps
+from .redirects import Redirects
+from .robots import Robots
 from .constants import STATUS
 
 # +++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -77,23 +76,59 @@ class Meetlify:
 
         self.renderer = Environment(
             loader=FileSystemLoader(
-                Path(self.dest, "themes", self.configs.theme, "templates")
+                Path(
+                    self.dest,
+                    self.configs.folders.themes,
+                    self.configs.theme,
+                    "templates",
+                )
             )
         )
-        self.meetups = []
-        self.posts = []
-        self.pages = []
-        self.sitemaps = []
+
+        self.meetups = Meetups(
+            path_=Path(
+                self.dest,
+                self.configs.folders.content,
+                self.configs.folders.meetups,
+            ),
+            reverse_=True,
+        )
+
+        self.posts = Posts(
+            path_=Path(
+                self.dest, self.configs.folders.content, self.configs.folders.posts
+            ),
+            reverse_=True,
+        )
+
+        self.pages = Pages(
+            path_=Path(
+                self.dest, self.configs.folders.content, self.configs.folders.pages
+            ),
+            reverse_=True,
+        )
+
+        self.sitemaps = Sitemaps(
+            sitemap_items_=[
+                {
+                    "name": "meetup",
+                    "items": self.meetups[STATUS.PUBLISHED, STATUS.DONE],
+                },
+                {"name": "posts", "items": self.posts[STATUS.PUBLISHED, STATUS.DONE]},
+                {"name": "pages", "items": self.pages[STATUS.PUBLISHED, STATUS.DONE]},
+            ]
+        )
+
+        self.redirects = Redirects.from_json(Path(self.dest, "redirects.json"))
+        self.robots = Robots.from_json(Path(self.dest, "robots.json"))
 
     def setup(self) -> None:
         """Setup Current Folder for Meetlify Website."""
-
         Path(self.dest, self.configs.folders.output).mkdir(parents=True, exist_ok=True)
-
         # TODO: Support to update themes folder - switch between multiple folders
         shutil.copytree(
-            Path(self.src, "themes", self.configs.theme),
-            Path(self.dest, "themes", self.configs.theme),
+            Path(self.src, self.configs.folders.themes, self.configs.theme),
+            Path(self.dest, self.configs.folders.themes, self.configs.theme),
             dirs_exist_ok=True,
         )
 
@@ -106,100 +141,18 @@ class Meetlify:
     def clean(self):
         """Cleanup output folder"""
 
-        _output_folder = Path(self.dest, self.configs.folders.output)
+        output_folder = Path(self.dest, self.configs.folders.output)
 
-        if not _output_folder.exists():
-            _output_folder.mkdir()
+        if not output_folder.exists():
+            output_folder.mkdir()
         else:
-            for path in _output_folder.iterdir():
+            for path in output_folder.iterdir():
                 if path.is_file():
                     path.unlink()
                 elif path.is_dir():
                     shutil.rmtree(path)
 
-    def parse_meetups(self):
-        """Parse all Meetup events available as Markdown"""
-
-        self.meetups = [
-            Meetup.from_markdown(mt)
-            for mt in Path(self.dest, self.configs.folders.content, "meetups").iterdir()
-            if mt.is_file() and mt.suffix == ".md"
-        ]
-        self.meetups = [
-            mt
-            for mt in self.meetups
-            if mt.status in [STATUS.PUBLISHED.value, STATUS.DONE.value]
-        ]
-        self.meetups = sorted(self.meetups, key=lambda x: x.id, reverse=True)
-
-        self.sitemaps.append(
-            Sitemap.from_dict(
-                {
-                    "name": "meetups",
-                    "slug": "/meetups/",
-                    "modifieddate": datetime.now(),
-                    "items": self.meetups,
-                }
-            )
-        )
-
-    def parse_pages(self):
-        """Parse Pages avaialable as Markdown"""
-
-        self.pages = [
-            Page.from_markdown(mt)
-            for mt in Path(self.dest, self.configs.folders.content, "pages").iterdir()
-            if mt.is_file() and mt.name in ["privacy.md", "terms.md", "contact.md"]
-        ]
-
-        self.sitemaps.append(
-            Sitemap.from_dict(
-                {
-                    "name": "pages",
-                    "slug": "/",
-                    "modifieddate": datetime.now(),
-                    "items": self.pages,
-                }
-            )
-        )
-
-    def parse_posts(self):
-        """Parse Posts avaialable as Markdown"""
-
-        self.posts = [
-            Post.from_markdown(mt)
-            for mt in Path(self.dest, self.configs.folders.content, "posts").iterdir()
-            if mt.is_file() and mt.suffix == ".md"
-        ]
-
-        self.sitemaps.append(
-            Sitemap.from_dict(
-                {
-                    "name": "posts",
-                    "slug": "/",
-                    "modifieddate": datetime.now(),
-                    "items": self.posts,
-                }
-            )
-        )
-
     def render_home(self):
-        """Render home page"""
-        with codecs.open(
-            Path(
-                self.dest,
-                self.configs.folders.content,
-                self.configs.folders.pages,
-                f"{self.configs.home}.md",
-            ),
-            "r",
-            encoding="utf-8",
-        ) as f:
-            data = f.read()
-            home_content = markdown.Markdown(extensions=["meta", "attr_list"]).convert(
-                data
-            )
-
         with open(
             Path(self.dest, self.configs.folders.output, "index.html"),
             mode="w",
@@ -208,13 +161,14 @@ class Meetlify:
             file.write(
                 self.renderer.get_template("index.html").render(
                     meta=self.configs,
-                    home_content="".join(home_content),
-                    meetups=self.meetups[0:3],
-                    posts=self.posts[0:3],
+                    about_us_paragraphs=self.configs.about_us,
+                    meetups=self.meetups[STATUS.PUBLISHED, STATUS.DONE][0:3],
+                    posts=self.posts[STATUS.PUBLISHED, STATUS.DONE][0:3],
                 )
             )
             print("... wrote output/home")
 
+    def render_404_page(self):
         with open(
             Path(self.dest, self.configs.folders.output, "404.html"),
             mode="w",
@@ -222,35 +176,137 @@ class Meetlify:
         ) as file:
             file.write(
                 self.renderer.get_template("404.html").render(
-                    meta=self.configs, meetups=self.meetups[0:3]
+                    meta=self.configs,
+                    meetups=self.meetups[STATUS.PUBLISHED, STATUS.DONE][0:3],
+                    posts=self.posts[STATUS.PUBLISHED, STATUS.DONE][0:3],
                 )
             )
             print("... wrote output/404")
 
+    def render_meetups(self):
+        """Render meetup pages and Meetup index page"""
+
+        # TODO: Check if there are less than 3 meetups and runs without error? make 3 config variable
+        for meetup in self.meetups[STATUS.PUBLISHED, STATUS.DONE]:
+            Path(
+                self.dest,
+                self.configs.folders.output,
+                self.configs.folders.meetups,
+                meetup.slug,
+            ).mkdir(parents=True, exist_ok=True)
+
+            with open(
+                Path(
+                    self.dest,
+                    self.configs.folders.output,
+                    self.configs.folders.meetups,
+                    meetup.slug,
+                    "index.html",
+                ),
+                mode="w",
+                encoding="utf-8",
+            ) as file:
+                file.write(
+                    self.renderer.get_template("meetup.html").render(
+                        meta=self.configs,
+                        meetup=meetup,
+                    )
+                )
+                print(f"...... wrote output/meetups/{meetup.slug}")
+
+        # save meetup index page
+        with open(
+            Path(
+                self.dest,
+                self.configs.folders.output,
+                self.configs.folders.meetups,
+                "index.html",
+            ),
+            mode="w",
+            encoding="utf-8",
+        ) as file:
+            file.write(
+                self.renderer.get_template("meetups.html").render(
+                    meta=self.configs,
+                    meetups=self.meetups[STATUS.PUBLISHED, STATUS.DONE],
+                )
+            )
+            print("... wrote output/meetups")
+
+    def render_posts(self):
+        """Render posts and Meetup index page"""
+
+        # TODO: Check if there are less than 3 posts  and runs without error? make 3 config variable
+        for post in self.posts[STATUS.PUBLISHED, STATUS.DONE]:
+            Path(
+                self.dest,
+                self.configs.folders.output,
+                self.configs.folders.posts,
+                post.slug,
+            ).mkdir(parents=True, exist_ok=True)
+
+            with open(
+                Path(
+                    self.dest,
+                    self.configs.folders.output,
+                    self.configs.folders.posts,
+                    post.slug,
+                    "index.html",
+                ),
+                mode="w",
+                encoding="utf-8",
+            ) as file:
+                file.write(
+                    self.renderer.get_template("post.html").render(
+                        meta=self.configs,
+                        post=post,
+                        banner=self.configs.get_banner(banner_name=post.banner),
+                    )
+                )
+                print(f"...... wrote output/posts/{post.slug}")
+
+        # save meetup index page
+        with open(
+            Path(
+                self.dest,
+                self.configs.folders.output,
+                self.configs.folders.posts,
+                "index.html",
+            ),
+            mode="w",
+            encoding="utf-8",
+        ) as file:
+            file.write(
+                self.renderer.get_template("posts.html").render(
+                    meta=self.configs, posts=self.posts[STATUS.PUBLISHED, STATUS.DONE]
+                )
+            )
+            print("... wrote output/posts")
+
     def render_pages(self):
         """Render permanent pages"""
 
-        for _page in self.pages:
-            Path(self.dest, self.configs.folders.output, _page.slug).mkdir(
+        for page in self.pages[STATUS.PUBLISHED, STATUS.DONE]:
+            Path(self.dest, self.configs.folders.output, page.slug).mkdir(
                 parents=True, exist_ok=True
             )
 
             with open(
-                Path(self.dest, self.configs.folders.output, _page.slug, "index.html"),
+                Path(self.dest, self.configs.folders.output, page.slug, "index.html"),
                 mode="w",
                 encoding="utf-8",
             ) as file:
                 file.write(
                     self.renderer.get_template("page.html").render(
-                        meta=self.configs, front=_page
+                        meta=self.configs, page=page
                     )
                 )
-                print(f"... wrote output/{_page.slug}")
+                print(f"... wrote output/{page.slug}")
 
     def render_sitemaps(self):
         """Render Sitemaps"""
 
-        for sitemap in self.sitemaps:
+        for sitemap in self.sitemaps[STATUS.PUBLISHED]:
             with open(
                 Path(
                     self.dest,
@@ -262,9 +318,7 @@ class Meetlify:
             ) as file:
                 file.write(
                     self.renderer.get_template("sitemap.xml").render(
-                        meta=self.configs,
-                        category=sitemap.slug,
-                        items=sitemap.items,
+                        meta=self.configs, sitemap=sitemap
                     )
                 )
                 print(f"... wrote output/{sitemap.name}/sitemap")
@@ -280,108 +334,42 @@ class Meetlify:
         ) as file:
             file.write(
                 self.renderer.get_template("sitemap-index.xml").render(
-                    meta=self.configs, sitemaps=self.sitemaps
+                    meta=self.configs, sitemaps=self.sitemaps[STATUS.PUBLISHED]
                 )
             )
             print("... wrote output/sitemap-index")
 
-    def render_meetups(self):
-        """Render meetup pages and Meetup index page"""
+    def render_redirects(self):
+        with open(
+            Path(
+                self.dest,
+                self.configs.folders.output,
+                "_redirects",
+            ),
+            mode="w",
+            encoding="utf-8",
+        ) as file:
+            file.write(str(self.redirects))
+            print("... wrote output/redirects file")
 
-        # TODO: Check if there are less than 3 meetups and runs without error? make 3 config variable
-        for _meetup in self.meetups:
-            Path(self.dest, self.configs.folders.output, "meetups", _meetup.slug).mkdir(
-                parents=True, exist_ok=True
-            )
-
+    def render_robots_txt(self):
+        if self.configs.robots:
             with open(
                 Path(
                     self.dest,
                     self.configs.folders.output,
-                    "meetups",
-                    _meetup.slug,
-                    "index.html",
+                    "robots.txt",
                 ),
                 mode="w",
                 encoding="utf-8",
             ) as file:
-                file.write(
-                    self.renderer.get_template("meetup.html").render(
-                        meta=self.configs,
-                        content=_meetup.content,
-                        front=_meetup,
-                    )
-                )
-                print(f"...... wrote output/meetups/{_meetup.slug}")
-
-        # save meetup index page
-        with open(
-            Path(self.dest, self.configs.folders.output, "meetups", "index.html"),
-            mode="w",
-            encoding="utf-8",
-        ) as file:
-            file.write(
-                self.renderer.get_template("meetups.html").render(
-                    meta=self.configs, meetups=self.meetups
-                )
-            )
-            print("... wrote output/meetups")
-
-    def render_posts(self):
-        """Render posts and Meetup index page"""
-
-        # TODO: Check if there are less than 3 meetups and runs without error? make 3 config variable
-        for _post in self.posts:
-            Path(self.dest, self.configs.folders.output, "posts", _post.slug).mkdir(
-                parents=True, exist_ok=True
-            )
-
-            _admonition = {
-                "type": "hint",
-                "title": "Update",
-                "message": "This is work in progress. Please checkback later for an updated version of this post.",
-            }
-
-            with open(
-                Path(
-                    self.dest,
-                    self.configs.folders.output,
-                    "posts",
-                    _post.slug,
-                    "index.html",
-                ),
-                mode="w",
-                encoding="utf-8",
-            ) as file:
-                file.write(
-                    self.renderer.get_template("post.html").render(
-                        meta=self.configs,
-                        content=_post.content,
-                        front=_post,
-                        admonition=_admonition,
-                    )
-                )
-                print(f"...... wrote output/posts/{_post.slug}")
-
-        # save meetup index page
-        with open(
-            Path(self.dest, self.configs.folders.output, "posts", "index.html"),
-            mode="w",
-            encoding="utf-8",
-        ) as file:
-            file.write(
-                self.renderer.get_template("posts.html").render(
-                    meta=self.configs, posts=self.posts
-                )
-            )
-            print("... wrote output/posts")
+                file.write(str(self.robots))
+                print("... wrote output/robots.txt file")
 
     def copy_assests(self):
-        """Copy Assets e.g. Static Folders, Images, Feeds, and Sitemaps"""
-
         # copy static folders
         shutil.copytree(
-            Path(self.dest, "themes", self.configs.theme, "static"),
+            Path(self.dest, self.configs.folders.themes, self.configs.theme, "static"),
             Path(
                 self.dest,
                 self.configs.folders.output,
@@ -393,37 +381,23 @@ class Meetlify:
 
         # copy images folder
         shutil.copytree(
-            Path(self.dest, self.configs.folders.content, "images"),
+            Path(self.dest, self.configs.folders.content, self.configs.folders.images),
             Path(
                 self.dest,
                 self.configs.folders.output,
-                "images",
+                self.configs.folders.images,
             ),
             dirs_exist_ok=True,
         )
         print("... copied output/images folder")
 
-        # copy robots.txt file
-        if self.configs.robots:
-            shutil.copyfile(
-                Path(self.src, "share", "robots.txt"),
-                Path(
-                    self.dest,
-                    self.configs.folders.output,
-                    "robots.txt",
-                ),
-            )
-            print("... copied output/robots.txt filed")
-
     def make(self):
-        """Make Static Site and Save to Output folder"""
-
-        self.parse_meetups()
-        self.parse_pages()
-        self.parse_posts()
         self.render_home()
+        self.render_404_page()
         self.render_meetups()
         self.render_posts()
         self.render_pages()
+        self.render_redirects()
         self.render_sitemaps()
+        self.render_robots_txt()
         self.copy_assests()

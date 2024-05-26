@@ -5,7 +5,7 @@ Meetlify: Static Site Generator for Meetup Websites
 A Python Package for Generating Static Website for Meetups.
 https://github.com/pybodensee/meetlify
 
-    src\meetlify\sitemap.py
+    src\meetlify\\robots.py
 
     Copyright (C) 2024-2024 Faisal Shahzad <info@serpwings.com>
 
@@ -34,9 +34,10 @@ SOFTWARE.
 # STANDARD LIBARY IMPORTS
 # +++++++++++++++++++++++++++++++++++++++++++++++++++++
 
+import json
+import codecs
+from pathlib import Path
 from dataclasses import dataclass
-from datetime import datetime
-
 
 # +++++++++++++++++++++++++++++++++++++++++++++++++++++
 # IMPLEMENATIONS
@@ -44,27 +45,58 @@ from datetime import datetime
 
 
 @dataclass
-class Sitemap:
-    """Sitemap Data Class"""
-
+class RobotAgent:
     name: str
-    slug: str
-    modifieddate: str
-    items: list
+    allow: list[str]
+    disallow: list[str]
+
+    def __str__(self) -> str:
+
+        allows = "\nAllow: " if self.allow else ""
+        allows += "\nAllow: ".join(self.allow)
+
+        disallows = "\nDisallow: " if self.disallow else ""
+        disallows += "\nDisallow: ".join(self.disallow)
+
+        return f"User-agent: {self.name}{allows}{disallows}\n\n"
 
     @classmethod
-    def from_dict(cls, object_):
-        """Genreate Sitemaps Class from object_ dictionary
-
-        Args:
-            object_ (dict): Sitemap object_ as dictionary
-
-        Returns:
-            Page: Return Constructed Sitemap Object
-        """
+    def from_dict(cls, object_: dict):
         return cls(
-            name=object_["name"],
-            slug=object_["slug"],
-            modifieddate=datetime.now(),
-            items=object_["items"],
+            name=object_.get("name"),
+            allow=object_.get("allow"),
+            disallow=object_.get("disallow"),
         )
+
+
+class Robots:
+    def __init__(self, *, robots_items_: dict) -> None:
+        self.all_robots = [
+            RobotAgent.from_dict(
+                {
+                    "name": robot_name,
+                    "allow": robot_values.get("allow"),
+                    "disallow": robot_values.get("disallow"),
+                }
+            )
+            for robot_name, robot_values in robots_items_.items()
+            if robot_name != "sitemaps"
+        ]
+
+        self.sitemaps = robots_items_.get("sitemaps")
+
+    def __str__(self) -> str:
+        sitemap_as_str = "\nSitemap: " if self.sitemaps else ""
+        sitemap_as_str += "\nSitemap: ".join(self.sitemaps)
+
+        return (
+            "\n".join([str(robot_agent) for robot_agent in self.all_robots])
+            + sitemap_as_str
+        )
+
+    @classmethod
+    def from_json(cls, json_file_: Path):
+        assert isinstance(json_file_, Path)
+        assert json_file_.exists()
+        with codecs.open(json_file_, "r", encoding="utf-8") as f:
+            return cls(robots_items_=json.load(f))

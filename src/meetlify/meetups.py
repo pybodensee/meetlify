@@ -35,24 +35,22 @@ SOFTWARE.
 # STANDARD LIBARY IMPORTS
 # +++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-import codecs
-from dataclasses import dataclass
 from pathlib import Path
+from dataclasses import dataclass
 from datetime import datetime, timezone
 
 # +++++++++++++++++++++++++++++++++++++++++++++++++++++
 # 3rd PARTY LIBRARY IMPORTS
 # +++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-import markdown
-
+from slugify import slugify
 
 # +++++++++++++++++++++++++++++++++++++++++++++++++++++
 # INTERNAL IMPORTS
 # +++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-from .utils import get_slug
-
+from .constants import STATUS
+from .utils import markdown_convertor
 
 # +++++++++++++++++++++++++++++++++++++++++++++++++++++
 # IMPLEMENATIONS
@@ -61,49 +59,62 @@ from .utils import get_slug
 
 @dataclass
 class Meetup:
-    """Meetup Data Class"""
-
-    id: str
-    title: float
-    date: str
-    modifieddate: str
-    author: str
-    slug: str
-    status: str
-    featureimage: str
-    address: str
+    title: str
     description: str
+    organizer: list[str]
+    slug: str
+    event_datetime: datetime
+    last_modified: datetime
+    feature_image: str
+    address: str
+    toc: str
     content: str
+    add_to_sitemap: bool
+    status: str  # TODO: replace with STATUS ENUM
+
+    def __lt__(self, other_):
+        return self.event_datetime < other_.event_datetime
 
     @classmethod
-    def from_markdown(cls, meetup_):
-        """Genreate Meetup Data Class from Markdown File
+    def from_markdown(cls, meetup_md_: Path):
+        meta, toc, content = markdown_convertor(meetup_md_)
+        return cls(
+            title=meta.get("title"),
+            description=meta.get("description"),
+            organizer=meta.get("organizer"),
+            slug=meta.get("slug") or slugify(meta.get("title")),
+            event_datetime=datetime.strptime(
+                meta.get("event_datetime"), "%Y-%m-%d::%H:%M"
+            ),
+            last_modified=datetime.fromtimestamp(
+                meetup_md_.stat().st_mtime, tz=timezone.utc
+            ),
+            feature_image=meta.get("feature_image"),
+            address=meta.get("address"),
+            toc=toc,
+            content=content,
+            add_to_sitemap=bool(meta.get("add_to_sitemap")),
+            status=meta.get("status"),
+        )
 
-        Args:
-            meetup_ (dict): Meetup as dict file
 
-        Returns:
-            Meetup: Return Constructed Meetup Object
-        """
-        _md = markdown.Markdown(extensions=["meta", "attr_list"])
-        with codecs.open(meetup_, "r", encoding="utf-8") as f:
-            data = f.read()
-            content_ = _md.convert(data)
+class Meetups:
+    def __init__(self, *, path_: Path, reverse_: bool = True) -> None:
+        self.events = sorted(
+            [
+                Meetup.from_markdown(meetup_md)
+                for meetup_md in path_.iterdir()
+                if meetup_md.is_file() and meetup_md.suffix == ".md"
+            ],
+            reverse=reverse_,
+        )
 
-            return cls(
-                content=content_,
-                id="".join(_md.Meta["id"]),
-                date="".join(_md.Meta["date"]),
-                modifieddate=datetime.fromtimestamp(
-                    Path(meetup_).stat().st_mtime, tz=timezone.utc
-                ),
-                author="".join(_md.Meta["author"]),
-                title="".join(_md.Meta["title"]),
-                description="".join(_md.Meta["description"]),
-                slug=get_slug(
-                    _md.Meta["slug"] if "slug" in _md.Meta else [""], _md.Meta["title"]
-                ),
-                featureimage="".join(_md.Meta["featureimage"]),
-                address="".join(_md.Meta["address"]),
-                status="".join(_md.Meta["status"]),
-            )
+    def __getitem__(self, status_: list[STATUS] | STATUS) -> list[Meetup]:
+        if isinstance(status_, STATUS):
+            status_ = [status_]
+
+        return [
+            event
+            for event in self.events
+            if event.status in [stat.value for stat in status_]
+        ]

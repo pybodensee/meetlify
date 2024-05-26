@@ -2,7 +2,7 @@
 requires = ["setuptools", "wheel"]
 
 [tool.black]
-target-version = ['py38']
+target-version = ['py10']
 include = '\.pyi?$'
 exclude = '''
 /(

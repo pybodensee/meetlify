@@ -5,7 +5,7 @@ Meetlify: Static Site Generator for Meetup Websites
 A Python Package for Generating Static Website for Meetups.
 https://github.com/pybodensee/meetlify
 
-    src\meetlify\page.py
+    src\meetlify\sitemap.py
 
     Copyright (C) 2024-2024 Faisal Shahzad <info@serpwings.com>
 
@@ -34,17 +34,14 @@ SOFTWARE.
 # STANDARD LIBARY IMPORTS
 # +++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-import codecs
 from dataclasses import dataclass
-from datetime import datetime, timezone
-from pathlib import Path
+from datetime import datetime
 
 # +++++++++++++++++++++++++++++++++++++++++++++++++++++
-# 3rd PARTY LIBRARY IMPORTS
+# INTERNAL IMPORTS
 # +++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-import markdown
-
+from .constants import STATUS
 
 # +++++++++++++++++++++++++++++++++++++++++++++++++++++
 # IMPLEMENATIONS
@@ -52,41 +49,58 @@ import markdown
 
 
 @dataclass
-class Page:
-    """Page Data Class"""
-
-    title: float
-    date: str
-    modifieddate: str
-    author: str
+class Sitemap:
+    name: str
     slug: str
-    status: str
-    description: str
-    content: str
+    last_modified: datetime
+    urls: list
+    images: list
+    news: list
+    videos: list
+    status: STATUS
 
     @classmethod
-    def from_markdown(cls, page_):
-        """Genreate Page Data Class from Markdown File
+    def from_dict(cls, object_: dict):
+        return cls(
+            name=object_.get("name"),
+            slug=object_.get("slug"),
+            last_modified=object_.get("last_modified"),
+            urls=object_.get("urls"),
+            images=object_.get("images"),
+            news=object_.get("news"),
+            videos=object_.get("videos"),
+            status=object_.get("status"),
+        )
 
-        Args:
-            page_ (dict): Page as dict file
 
-        Returns:
-            Page: Return Constructed Page Object
-        """
-        _md = markdown.Markdown(extensions=["meta", "attr_list"])
-        with codecs.open(page_, "r", encoding="utf-8") as f:
-            data = f.read()
-
-            return cls(
-                content=_md.convert(data),
-                date="".join(_md.Meta["date"]),
-                modifieddate=datetime.fromtimestamp(
-                    Path(page_).stat().st_mtime, tz=timezone.utc
-                ),
-                author="".join(_md.Meta["author"]),
-                title="".join(_md.Meta["title"]),
-                description="".join(_md.Meta["description"]),
-                slug="".join(_md.Meta["slug"]),
-                status="".join(_md.Meta["status"]),
+class Sitemaps:
+    def __init__(self, *, sitemap_items_: list[dict]) -> None:
+        self.all_sitemaps = [
+            Sitemap.from_dict(
+                {
+                    "name": sitemap_item.get("name"),
+                    "slug": f"/{sitemap_item.get('name')}/",
+                    "last_modified": (
+                        sitemap_item.get("items")[0].last_modified
+                        if len(sitemap_item.get("items")) > 0
+                        else datetime.now()
+                    ),
+                    "urls": sitemap_item.get("items"),
+                    "images": [],
+                    "news": [],
+                    "videos": [],
+                    "status": STATUS.PUBLISHED.value,
+                }
             )
+            for sitemap_item in sitemap_items_
+        ]
+
+    def __getitem__(self, status_: list[STATUS] | STATUS) -> list[Sitemap]:
+        if isinstance(status_, STATUS):
+            status_ = [status_]
+
+        return [
+            sitemap
+            for sitemap in self.all_sitemaps
+            if sitemap.status in [stat.value for stat in status_]
+        ]
