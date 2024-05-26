@@ -227,6 +227,7 @@ class Meetlify:
                     self.renderer.get_template("meetup.html").render(
                         meta=self.configs,
                         meetup=meetup,
+                        meetups=self.meetups[STATUS.PUBLISHED, STATUS.DONE][1:4],
                     )
                 )
                 logging.info(f"...... wrote output/meetups/{meetup.slug}")
@@ -277,6 +278,7 @@ class Meetlify:
                     self.renderer.get_template("post.html").render(
                         meta=self.configs,
                         post=post,
+                        posts=self.posts[STATUS.PUBLISHED, STATUS.DONE][1:4],
                         banner=self.configs.get_banner(banner_name=post.banner),
                     )
                 )
