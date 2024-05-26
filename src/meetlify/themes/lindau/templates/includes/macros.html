@@ -1,0 +1,198 @@
+{% macro title_bar(meta, article, message="") -%}
+<h1 class="fw-bolder mb-1">{{message}} {{article.title}}</h1>
+{% if article.create_date %}
+<div class="text-muted fst-italic mt-2">Published on {{article.create_date.strftime('%Y-%m-%d')}} by {{meta.author}}</div>
+{% for category in article.categories %}
+<a class="badge bg-secondary text-decoration-none link-light mt-3"
+    href="{{meta.URL}}/{{meta.folders.categories}}/{{category|trim|lower}}/">{{category|trim|capitalize}}</a>
+{% endfor %}
+{% else %}
+{% for category in article.categories %}
+<a class="badge bg-secondary text-decoration-none link-light mt-3"
+    href="{{meta.URL}}/{{category|trim|lower}}/">{{category|trim|capitalize}}</a>
+{% endfor %}
+{% endif %}
+{%- endmacro %}
+
+{% macro category_card(meta, category) -%}
+<div class="col-lg-4 mb-5">
+    <div class="card h-100 shadow border-0">
+        <img class="card-img-top" src="{{meta.URL}}/images/{{category.feature_image}}"
+            alt="Feautre Image for category">
+        <div class="card-body p-4">
+            <a class="text-decoration-none link-dark stretched-link"
+                href="{{meta.URL}}/{{meta.folders.categories}}/{{category.slug}}/">
+                <h5 class="card-title mb-3">{{category.title}}
+                </h5>
+            </a>
+        </div>
+    </div>
+</div>
+{%- endmacro %}
+
+{% macro post_card(meta, post) -%}
+<div class="col-lg-4 mb-5">
+    <div class="card h-100 shadow border-0">
+        <img class="card-img-top" src="{{meta.URL}}/images/{{post.feature_image}}"
+            alt="Feature Image for post">
+        <div class="card-body p-4">
+            
+            {% for category in post.categories %}
+            <a class="badge bg-primary bg-gradient rounded-pill mb-2"
+                href="{{meta.URL}}/{{meta.folders.categories}}/{{category|trim|lower}}/">{{category|trim|capitalize}}</a>
+            {% endfor %}
+
+            <a class="text-decoration-none link-dark stretched-link"
+                href="{{meta.URL}}/{{meta.folders.posts}}/{{post.slug}}/">
+                <h5 class="card-title mb-3"> {{post.title}}
+                </h5>
+            </a>
+            <p class="card-text mb-0">{{post.description}}</p>
+        </div>
+        <div class="card-footer p-4 pt-0 bg-transparent border-top-0">
+            <div class="d-flex align-items-end justify-content-between">
+                <div class="d-flex align-items-center">
+                    <div class="small">
+                        <div class="fw-bold">Last Updated on {{post.create_date.strftime('%Y-%m-%d')}}
+                        </div>
+                        <div class="text-muted">Author: {{post.author}}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{%- endmacro %}
+
+{% macro meetup_card(meta, meetup) -%}
+<div class="col-lg-4 mb-5">
+    <div class="card h-100 shadow border-0">
+        <img class="card-img-top" src="{{meta.URL}}/images/{{meetup.feature_image}}"
+            alt="Feature Image for Meetup">
+        <div class="card-body p-4">
+            {% for category in meetup.categories %}
+            <a class="badge bg-primary bg-gradient rounded-pill mb-2"
+                href="{{meta.URL}}/{{meta.folders.categories}}/{{category|trim|lower}}/">{{category|trim|capitalize}}</a>
+            {% endfor %}
+            <a class="text-decoration-none link-dark stretched-link"
+                href="{{meta.URL}}/{{meta.folders.meetups}}/{{meetup.slug}}/">
+                <h5 class="card-title mb-3"> {{meetup.title}}
+                </h5>
+            </a>
+            <p class="card-text mb-0">Agenda: {{meetup.description}}</p>
+        </div>
+        <div class="card-footer p-4 pt-0 bg-transparent border-top-0">
+            <div class="d-flex align-items-end justify-content-between">
+                <div class="d-flex align-items-center">
+                    <div class="small">
+                        <div class="fw-bold">Date: {{meetup.event_datetime.strftime('%Y-%m-%d @ %H:%M')}} ·
+                            Status:
+                            <em>{{meetup.status}}</em>
+                        </div>
+                        <div class="text-muted">Location: {{meetup.address}}
+                        </div>
+                        <div class="text-muted">Organizer: {{meetup.organizer}}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{%- endmacro %}
+
+{% macro meetup_organizer_card(meta, meetup) -%}
+<div class="d-flex align-items-center mt-lg-4 mb-4">
+    <img class="img-fluid rounded-circle" src="{{meta.URL}}/static/assets/author.png" width="60"
+        height="60" alt="{{meta.author}} Image" />
+    <div class="ms-3">
+        <h4 class="fw-bold">{{meetup.organizer}} </h4>
+        <div class="text-muted">Organizer</div>
+    </div>
+</div>
+{%- endmacro %}
+
+{% macro meetup_meta_card(meta, meetup) -%}
+<div class="card border-0 bg-light mt-xl-3">
+    <div class="card-body p-4 py-lg-4">
+        <div class="text-muted mb-2"><div class="fw-bold">Meetup Date:</div> 
+                {{meetup.event_datetime.strftime('%Y-%m-%d @ %H:%M')}}
+        </div>
+        <div class="text-muted mb-2"><div class="fw-bold">Meetup Location:</div>{{meetup.address}}
+        </div>
+    </div>
+</div>
+{%- endmacro %}
+
+{% macro meetup_map_card(meta, meetup) -%}
+<div class="card border-0 bg-light mt-xl-3">
+    <div class="card-body p-4 py-lg-4">
+        <img class="img-fluid rounded mb-5 mb-lg-0"
+            src="{{meta.URL}}/images/{{meetup.feature_image}}" alt="{{meta.author}} image">
+    </div>
+</div>
+{%- endmacro %}
+
+{% macro toc_card(post) -%}
+{% if post.slug != "contact"  %}
+<div class="card border-0 bg-light mt-xl-3">
+    <div class="card-body p-4 py-lg-4">
+        <div class="h5 fw-bolder px-2">Table of Contents</div>
+        <div class="fw-bold mt-2">
+            {{post.toc}}
+        </div>
+    </div>
+</div>
+{% endif %}
+{%- endmacro %}
+
+{% macro banner_card(banner) -%}
+{% if banner.name %}
+<div class="admonition {{banner.type_}}">
+    <p class="admonition-title text-white fw-bolder">{{banner.name|capitalize}}</p>
+    <p>{{banner.message}}</p>
+</div>
+{% endif %}
+{%- endmacro %}
+
+{% macro contact_us_card2(meta) -%}
+<div class="card border-0 bg-light mt-xl-3">
+    <div class="card-body p-4 py-lg-4">
+        <div class="d-flex align-items-center justify-content-center">
+            <div class="text-center">
+                <div class="h6 fw-bolder">Do you have more questions?</div>
+                <p class="text-muted mb-4">
+                    Check out our <a href=" {{meta.URL}}/contact/">Contact us</a> page to get in
+                    touch or send us an email at <br><code>pybodensee at gmail dot com</code>
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+{%- endmacro %}
+
+{% macro contact_us_card(meta) -%}
+<div class="card border-0 bg-light mt-xl-3">
+    <div class="card-body p-4 py-lg-4">
+        <div class="gx-5">
+            <div class="col">
+                <div class="feature bg-primary bg-gradient text-white rounded-3 mb-3"><i class="bi bi-chat-dots"></i>
+                </div>
+                <div class="h5 mb-2">Email us</div>
+                <p class="text-muted mb-4">Contact us on our email address: <br><code>pybodensee at gmail dot com</code></p>
+            </div>
+            <div class="col">
+                <div class="feature bg-primary bg-gradient text-white rounded-3 mb-3"><i class="bi bi-people"></i></div>
+                <div class="h5">Ask the community</div>
+                <p class="text-muted mb-4">Join our community and explore best of Python.</p>
+            </div>
+            <div class="col">
+                <div class="feature bg-primary bg-gradient text-white rounded-3 mb-3"><i class="bi bi-question-circle"></i>
+                </div>
+                <div class="h5">Projects</div>
+                <p class="text-muted mb-4">Visit our <a href="https://github.com/pybodensee/" target="_blank">GitHub</a> page to learn more about our open source projects.
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+{%- endmacro %}

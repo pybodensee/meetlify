@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% import 'includes/macros.html' as macros %}
+
+{% block main_header %}
+<meta name="description" content="{{category.description}}" />
+<meta name="author" content="{{category.author}}" />
+<link href="{{meta.URL}}/{{meta.folders.categorys}}/{{category.slug}}/" rel="canonical" />
+<title>{{category.title}}</title>
+<meta content="{{category.title}}" property="og:title" />
+<meta content="{{category.description}}" property="og:description" />
+<meta content="{{meta.URL}}/{{meta.folders.categorys}}/{{category.slug}}/" property="og:url" />
+{% endblock main_header %}
+
+
+{% block main_content %}
+<section class="py-5">
+    <div class="container px-5 my-5">
+        <div class="row gx-5">
+            <div class="col-lg-8">
+                <article>
+                    <header class="mb-4">
+                        {{macros.title_bar(meta, category, "Category -")}}
+                    </header>
+                    <section class="mb-5">
+                        {{ category.content }}
+                    </section>
+                </article>
+            </div>
+            <div class="col-lg-4">
+                <div class="py-2 sidebar">
+                    {{macros.contact_us_card(meta)}}
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<section class="py-5">
+    <div class="container px-5">
+        <h2 class="fw-bolder mb-4">Similar Posts in {{category.title}} Category </h2>
+        <div class="row gx-5">
+            {% for post in posts%}
+                {{macros.post_card(meta, post)}}
+            {% endfor%}
+        </div>
+    </div>
+</section>
+{% endblock main_content %}

@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% import 'includes/macros.html' as macros %}
+{% block main_header %}
+<meta name="description" content="Here is the list of all categories on {{meta.name}}" />
+<meta name="author" content="{{meta.author}}" />
+<link href="{{meta.URL}}/{{meta.folders.categories}}/" rel="canonical" />
+<title>Categories on {{meta.name}}</title>
+<meta content="Categories on {{meta.name}}" property="og:title" />
+<meta content="Here is the list of all categories on {{meta.name}}" property="og:description" />
+<meta content="{{meta.URL}}/{{meta.folders.categories}}/" property="og:url" />
+{% endblock main_header %}
+
+
+{% block main_content %}
+
+<!-- category preview section-->
+<section class="py-5">
+    <div class="container px-5">
+        <h2 class="fw-bolder mb-4">Categories</h2>
+        <div class="row gx-5">
+            {% for category in categories%}
+                {{macros.category_card(meta, category)}}
+            {% endfor%}
+        </div>
+    </div>
+</section>
+{% endblock main_content %}

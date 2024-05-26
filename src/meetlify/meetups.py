@@ -65,6 +65,7 @@ class Meetup:
     description: str
     organizer: list[str]
     slug: str
+    categories: str
     event_datetime: datetime
     last_modified: datetime
     feature_image: str
@@ -91,6 +92,9 @@ class Meetup:
             last_modified=datetime.fromtimestamp(
                 meetup_md_.stat().st_mtime, tz=timezone.utc
             ),
+            categories=[
+                category.strip() for category in meta.get("categories").split(",")
+            ],
             feature_image=meta.get("feature_image"),
             address=meta.get("address"),
             toc=toc,

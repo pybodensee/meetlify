@@ -65,6 +65,7 @@ class Category:
     create_date: datetime
     last_modified: datetime
     feature_image: str
+    toc: str
     content: str
     add_to_sitemap: bool
     status: str
@@ -85,6 +86,7 @@ class Category:
                 category_md_.stat().st_mtime, tz=timezone.utc
             ),
             feature_image=meta.get("feature_image"),
+            toc=toc,
             content=content,
             add_to_sitemap=bool(meta.get("add_to_sitemap")),
             status=meta.get("status"),
