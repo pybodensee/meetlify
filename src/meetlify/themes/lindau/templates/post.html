@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+
+{% block main_header %}
+<meta name="description" content="{{post.description}}" />
+<meta name="author" content="{{post.author}}" />
+<link href="{{meta.URL}}/{{meta.folders.posts}}/{{post.slug}}/" rel="canonical" />
+<title>{{post.title}}</title>
+<meta content="{{post.title}}" property="og:title" />
+<meta content="{{post.description}}" property="og:description" />
+<meta content="{{meta.URL}}/{{meta.folders.posts}}/{{post.slug}}/" property="og:url" />
+{% endblock main_header %}
+
+
+{% block main_content %}
+<!-- Page Content-->
+<section class="py-5">
+    <div class="container px-5 my-5">
+        <div class="row gx-5">
+            <div class="col-lg-8">
+                <!-- Post content-->
+                <article>
+                    <!-- Post header-->
+                    <header class="mb-4">
+                        <!-- Post title-->
+                        <h1 class="fw-bolder mb-1">{{post.title}}</h1>
+                        <div class="text-muted fst-italic mt-2">Published on {{post.create_date.strftime('%Y-%m-%d')}}
+                            by {{meta.author}}
+                        </div>
+                        <!-- Post categories-->
+                        {% for tag in post.tags %}
+                        <a class="badge bg-secondary text-decoration-none link-light mt-3"
+                            href="/">{{tag|trim|capitalize}}</a>
+                        {% endfor %}
+                    </header>
+                    <section class="mb-5">
+                        {% if banner.name %}
+                        <div class="admonition {{banner.type_}}">
+                            <p class="admonition-title text-white fw-bolder">{{banner.name}}</p>
+                            <p>{{banner.message}}</p>
+                        </div>
+                        {% endif %}
+                        {{ post.content }}
+                    </section>
+                </article>
+            </div>
+            <div class="col-lg-4">
+                <div class="py-2 sidebar">
+                    <div class="card border-0 bg-light mt-xl-3">
+                        <div class="card-body p-4 py-lg-4">
+                            <div class="h5 fw-bolder px-2">Table of Contents</div>
+                            <div class="fw-bold mt-2">
+                                {{post.toc}}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card border-0 bg-light mt-xl-3">
+                        <div class="card-body p-4 py-lg-4">
+                            <div class="d-flex align-items-center justify-content-center">
+                                <div class="text-center">
+                                    <div class="h6 fw-bolder">Have more questions?</div>
+                                    <p class="text-muted mb-4">
+                                        Check out our <a href=" {{meta.URL}}/contact/">Contact us</a> page to get in
+                                        touch or send us an email at <br><code>pybodensee at gmail dot com</code>
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock main_content %}

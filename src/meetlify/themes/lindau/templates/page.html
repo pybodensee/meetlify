@@ -1,20 +1,20 @@
 {% extends "base.html" %}
 
 {% block main_header %}
-<meta name="description" content="{{front.description}}" />
-<meta name="author" content="{{front.author}}" />
-<link href="{{meta.URL}}/{{front.slug}}/" rel="canonical" />
-<title>{{front.title}}</title>
-<meta content="{{front.title}}" property="og:title" />
-<meta content="{{front.description}}" property="og:description" />
-<meta content="{{meta.URL}}/{{front.slug}}/" property="og:url" />
+<meta name="description" content="{{page.description}}" />
+<meta name="author" content="{{page.author}}" />
+<link href="{{meta.URL}}/{{page.slug}}/" rel="canonical" />
+<title>{{page.title}}</title>
+<meta content="{{page.title}}" property="og:title" />
+<meta content="{{page.description}}" property="og:description" />
+<meta content="{{meta.URL}}/{{page.slug}}/" property="og:url" />
 {% endblock main_header %}
 
 {% block main_content %}
 <!-- Header-->
 <section class="py-5">
     <div class="container px-5">
-        {{front.content}}
+        {{page.content}}
     </div>
 </section>
 {% endblock main_content %}

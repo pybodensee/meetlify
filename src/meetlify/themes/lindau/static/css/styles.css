@@ -12658,13 +12658,38 @@ ul {
   margin-bottom: 1rem;
 }
 
-h1,
-h2,
-h3,
-h4,
-h5,
+h1 {
+  font-weight: bolder !important;
+  margin-bottom: 1.12rem !important;
+  font-size: 1.70rem;
+}
+
+h2 {
+  font-weight: bolder !important;
+  margin-bottom: 1.12rem !important;
+  font-size: 1.60rem;
+}
+
+h3 {
+  font-weight: bolder !important;
+  margin-bottom: 1.12rem !important;
+  font-size: 1.50rem;
+}
+
+h4 {
+  font-weight: bolder !important;
+  margin-bottom: 1.12rem !important;
+  font-size: 1.40rem;
+}
+
+h5 {
+  font-weight: bolder !important;
+  margin-bottom: 1.12rem !important;
+  font-size: 1.30rem;
+}
+
 h6 {
   font-weight: bolder !important;
   margin-bottom: 1.12rem !important;
-  font-size: 1.75rem;
+  font-size: 1.10rem;
 }

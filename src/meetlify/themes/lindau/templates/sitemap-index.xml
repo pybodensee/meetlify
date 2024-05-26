@@ -3,7 +3,7 @@
     {% for sitemap in sitemaps %}
 	<sitemap>
         <loc>{{meta.URL}}/sitemap-{{sitemap.name}}.xml</loc>
-        <lastmod>{{ sitemap.modifieddate.strftime('%Y-%m-%dT%H:%M+00:00') }}</lastmod>
+        <lastmod>{{ sitemap.last_modified.strftime('%Y-%m-%dT%H:%M+00:00') }}</lastmod>
 	</sitemap>
     {% endfor %}
 </sitemapindex>

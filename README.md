@@ -43,12 +43,17 @@ destination_path = Path("/home/user/Desktop/sample_webiste/")
 initialize(dest_=destination_path)
 
 # Modify newly created config.json file as per your need.
-mlfy = Meetlify(dest_=destination_path) # Create Meetlify object with destination folder
-mlfy.parse_meetups() # Parse meetups markdown files
-mlfy.render_meetups() # Render meetups
-mlfy.render_home() # Render Home Page
-mlfy.render_pages() # Render Static Pages
-mlfy.copy_assests() # Copy assets e.g. Favicon, Images, JS, CSS files
+mtlfy = Meetlify(dest_=destination_path)
+mtlfy.render_home()
+mtlfy.render_404_page()
+mtlfy.render_meetups()
+mtlfy.render_posts()
+mtlfy.render_pages()
+mtlfy.render_redirects()
+mtlfy.render_sitemaps()
+mtlfy.render_robots_txt()
+mtlfy.copy_assests()
+
 ```
 
 ## How to Extend ?

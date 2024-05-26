@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+
+{% block main_header %}
+<meta name="description" content="Here is the list of recent posts by {{meta.name}}" />
+<meta name="author" content="{{meta.author}}" />
+<link href="{{meta.URL}}/{{meta.folders.posts}}/" rel="canonical" />
+<title>Recent Posts by {{meta.name}}</title>
+<meta content="Recent Posts by {{meta.name}}" property="og:title" />
+<meta content="Here is the list of recent posts published by {{meta.name}}" property="og:description" />
+<meta content="{{meta.URL}}/{{meta.folders.posts}}/" property="og:url" />
+{% endblock main_header %}
+
+
+{% block main_content %}
+<!-- Page Content-->
+<section class="py-5 bg-light">
+    <div class="container px-5">
+        <h1 class="fw-bolder mb-4">Recent Blog Post</h1>
+        <div class="card border-0 shadow rounded-3 overflow-hidden">
+            <div class="card-body p-0">
+                <div class="row gx-0">
+                    <div class="col-lg-6 col-xl-5 py-lg-5">
+                        <div class="p-4 p-md-5">
+                            <div class="badge bg-primary bg-gradient rounded-pill mb-2">Post</div>
+                            <div class="h2 fw-bolder"> {{posts[0].title}}</div>
+                            <p>{{posts[0].description}}</p>
+                            <a class="stretched-link text-decoration-none"
+                                href="{{meta.URL}}/{{meta.folders.posts}}/{{posts[0].slug}}/">
+                                Read more <i class="bi bi-arrow-right"></i>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="col-lg-6 col-xl-7">
+                        <div class="bg-featured-blog"
+                            style="background-image: url('{{meta.URL}}/images/{{posts[0].feature_image}}')">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- post preview section-->
+<section class="py-5">
+    <div class="container px-5">
+        <h2 class="fw-bolder mb-4">Blog Posts Archive </h2>
+        <div class="row gx-5">
+            {% for post in posts[1:]%}
+            <div class="col-lg-4 mb-5">
+                <div class="card h-100 shadow border-0">
+                    <img class="card-img-top" src="{{meta.URL}}/images/{{post.feature_image}}"
+                        alt="Feautre Image for post">
+                    <div class="card-body p-4">
+                        <div class="badge bg-primary bg-gradient rounded-pill mb-2">Post</div>
+                        <a class="text-decoration-none link-dark stretched-link"
+                            href="{{meta.URL}}/{{meta.folders.posts}}/{{post.slug}}/">
+                            <h5 class="card-title mb-3">{{post.title}}
+                            </h5>
+                        </a>
+                        <p class="card-text mb-0">{{post.description}}</p>
+                    </div>
+                    <div class="card-footer p-4 pt-0 bg-transparent border-top-0">
+                        <div class="d-flex align-items-end justify-content-between">
+                            <div class="d-flex align-items-center">
+                                <div class="small">
+                                    <div class="fw-bold">Last Updated on {{post.create_date.strftime('%Y-%m-%d')}}
+                                    </div>
+                                    <div class="text-muted">Author: {{post.author}}</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor%}
+        </div>
+    </div>
+</section>
+{% endblock main_content %}

@@ -24,7 +24,8 @@
                     </p>
                     <div class="d-grid gap-3 d-sm-flex justify-content-sm-center justify-content-xl-start">
                         <a class="btn btn-primary btn-lg px-4 me-sm-3" href="{{meta.URL}}/">Home</a>
-                        <a class="btn btn-primary btn-lg px-4 me-sm-3" href="{{meta.URL}}/meetups/">Meetups</a>
+                        <a class="btn btn-primary btn-lg px-4 me-sm-3"
+                            href="{{meta.URL}}/{{meta.folders.meetups}}/">Meetups</a>
                     </div>
                 </div>
             </div>
@@ -48,12 +49,12 @@
             {% for meetup in meetups%}
             <div class="col-lg-4 mb-5">
                 <div class="card h-100 shadow border-0">
-                    <img class="card-img-top" src="{{meta.URL}}/images/{{meetup.featureimage}}"
+                    <img class="card-img-top" src="{{meta.URL}}/images/{{meetup.feature_image}}"
                         alt="Feature Image for Meetup">
                     <div class="card-body p-4">
                         <div class="badge bg-primary bg-gradient rounded-pill mb-2">Meetup</div>
                         <a class="text-decoration-none link-dark stretched-link"
-                            href="{{meta.URL}}/meetups/{{meetup.slug}}/">
+                            href="{{meta.URL}}/{{meta.folders.meetups}}/{{meetup.slug}}/">
                             <h5 class="card-title mb-3"> {{meetup.title}}
                             </h5>
                         </a>
@@ -78,7 +79,7 @@
             {% endfor%}
         </div>
         <div class="text-end mb-5 mb-xl-0">
-            <a class="text-decoration-none" href="{{meta.URL}}/meetups/">
+            <a class="text-decoration-none" href="{{meta.URL}}/{{meta.folders.meetups}}/">
                 Older Meetups
                 <i class="bi bi-arrow-right"></i>
             </a>

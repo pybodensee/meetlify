@@ -1,13 +1,13 @@
 {% extends "base.html" %}
 
 {% block main_header %}
-<meta name="description" content="{{front.description}}" />
-<meta name="author" content="{{front.author}}" />
-<link href="{{meta.URL}}/meetups/{{front.slug}}/" rel="canonical" />
-<title>{{front.title}}</title>
-<meta content="{{front.title}}" property="og:title" />
-<meta content="{{front.description}}" property="og:description" />
-<meta content="{{meta.URL}}/meetups/{{front.slug}}/" property="og:url" />
+<meta name="description" content="{{meetup.description}}" />
+<meta name="author" content="{{meetup.author}}" />
+<link href="{{meta.URL}}/{{meta.folders.meetups}}/{{meetup.slug}}/" rel="canonical" />
+<title>{{meetup.title}}</title>
+<meta content="{{meetup.title}}" property="og:title" />
+<meta content="{{meetup.description}}" property="og:description" />
+<meta content="{{meta.URL}}/{{meta.folders.meetups}}/{{meetup.slug}}/" property="og:url" />
 {% endblock main_header %}
 
 
@@ -22,13 +22,13 @@
                     <!-- Post header-->
                     <header class="mb-4">
                         <!-- Post title-->
-                        <h1 class="fw-bolder mb-1">{{front.title}}</h1>
-                        <!-- Post categories-->
+                        <h1 class="fw-bolder mb-1">{{meetup.title}}</h1>
+                        <!-- Post tags-->
                         <a class="badge bg-secondary text-decoration-none link-light mt-3" href="/">Python</a>
                         <a class="badge bg-secondary text-decoration-none link-light mt-3" href="/">Meetup</a>
                     </header>
                     <section class="mb-5">
-                        {{ content }}
+                        {{ meetup.content }}
                     </section>
                 </article>
             </div>
@@ -38,23 +38,25 @@
                         <img class="img-fluid rounded-circle" src="{{meta.URL}}/static/assets/author.png" width="60"
                             height="60" alt="{{meta.author}} Image" />
                         <div class="ms-3">
-                            <h4 class="fw-bold">{{front.author}} </h4>
+                            <h4 class="fw-bold">{{meetup.organizer}} </h4>
                             <div class="text-muted">Organizer</div>
                         </div>
                     </div>
                     <div class="card border-0 bg-light mt-xl-3">
                         <div class="card-body p-4 py-lg-4">
-                            <div class="text-muted mb-2">Meetup Date: <div class="fw-bold">{{front.date}}</div>
+                            <div class="text-muted mb-2">Meetup Date: <div class="fw-bold">
+                                    {{meetup.event_datetime.strftime('%Y-%m-%d @ %H:%M')}}
+                                </div>
                             </div>
-                            <div class="text-muted mb-2">Meetup Location: <div class="fw-bold">{{front.address}}</div>
+                            <div class="text-muted mb-2">Meetup Location: <div class="fw-bold">{{meetup.address}}</div>
                             </div>
                         </div>
                     </div>
 
                     <div class="card border-0 bg-light mt-xl-3">
                         <div class="card-body p-4 py-lg-4">
-                            <img class="img-fluid rounded mb-5 mb-lg-0" src="{{meta.URL}}/images/{{front.featureimage}}"
-                                alt="{{meta.author}} image">
+                            <img class="img-fluid rounded mb-5 mb-lg-0"
+                                src="{{meta.URL}}/images/{{meetup.feature_image}}" alt="{{meta.author}} image">
                         </div>
                     </div>
 
@@ -65,8 +67,7 @@
                                     <div class="h6 fw-bolder">Have more questions?</div>
                                     <p class="text-muted mb-4">
                                         Check out our <a href=" {{meta.URL}}/contact/">Contact us</a> page to get in
-                                        touch
-                                        or to get in touch send us an email at <code>pybodensee at gmail dot com</code>
+                                        touch or send us an email at <br><code>pybodensee at gmail dot com</code>
                                     </p>
                                 </div>
                             </div>

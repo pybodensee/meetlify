@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-    {% for item in items %}
+    {% for url in sitemap.urls %}
     <url>
-        <loc>{{meta.URL}}{{category}}{{item.slug}}/</loc>
-        <lastmod>{{ item.modifieddate.strftime('%Y-%m-%dT%H:%M+00:00') }}</lastmod>
+        <loc>{{meta.URL}}{{sitemap.slug}}{{url.slug}}/</loc>
+        <lastmod>{{ url.last_modified.strftime('%Y-%m-%dT%H:%M+00:00') }}</lastmod>
     </url>
     {% endfor %}
 </urlset>
