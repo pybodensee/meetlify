@@ -122,22 +122,22 @@ class Meetlify:
         self.sitemaps = Sitemaps(
             sitemap_items_=[
                 {
-                    "name": "pages",
+                    "name": self.configs.folders.pages,
                     "items": self.pages[STATUS.PUBLISHED, STATUS.DONE],
                     "robots_txt": True,
                 },
                 {
-                    "name": "posts",
+                    "name": self.configs.folders.posts,
                     "items": self.posts[STATUS.PUBLISHED, STATUS.DONE],
                     "robots_txt": True,
                 },
                 {
-                    "name": "meetups",
+                    "name": self.configs.folders.meetups,
                     "items": self.meetups[STATUS.PUBLISHED, STATUS.DONE],
                     "robots_txt": True,
                 },
                 {
-                    "name": "categories",
+                    "name": self.configs.folders.categories,
                     "items": self.categories[STATUS.PUBLISHED, STATUS.DONE],
                     "robots_txt": True,
                 },
