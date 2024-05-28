@@ -96,3 +96,6 @@ class Robots:
         assert json_file_.exists()
         with codecs.open(str(json_file_), "r", encoding="utf-8") as f:
             return cls(robots_items_=json.load(f))
+
+    def add_sitemaps(self, additional_sitems: list[str]) -> None:
+        self.sitemaps += additional_sitems

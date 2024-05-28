@@ -59,6 +59,7 @@ class Sitemap:
     news: list
     videos: list
     status: STATUS
+    robots_txt: bool # Add to robots.txt
 
     @classmethod
     def from_dict(cls, object_: dict) -> Self:
@@ -71,6 +72,7 @@ class Sitemap:
             news=object_.get("news"),
             videos=object_.get("videos"),
             status=object_.get("status"),
+            robots_txt=object_.get("robots_txt"),
         )
 
 
@@ -91,6 +93,7 @@ class Sitemaps:
                     "news": [],
                     "videos": [],
                     "status": STATUS.PUBLISHED.value,
+                    "robots_txt": sitemap_item.get("robots_txt")
                 }
             )
             for sitemap_item in sitemap_items_

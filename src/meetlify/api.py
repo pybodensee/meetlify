@@ -121,15 +121,25 @@ class Meetlify:
 
         self.sitemaps = Sitemaps(
             sitemap_items_=[
-                {"name": "pages", "items": self.pages[STATUS.PUBLISHED, STATUS.DONE]},
-                {"name": "posts", "items": self.posts[STATUS.PUBLISHED, STATUS.DONE]},
+                {
+                    "name": "pages",
+                    "items": self.pages[STATUS.PUBLISHED, STATUS.DONE],
+                    "robots_txt": True,
+                },
+                {
+                    "name": "posts",
+                    "items": self.posts[STATUS.PUBLISHED, STATUS.DONE],
+                    "robots_txt": True,
+                },
                 {
                     "name": "meetups",
                     "items": self.meetups[STATUS.PUBLISHED, STATUS.DONE],
+                    "robots_txt": True,
                 },
                 {
                     "name": "categories",
                     "items": self.categories[STATUS.PUBLISHED, STATUS.DONE],
+                    "robots_txt": True,
                 },
             ]
         )
@@ -423,6 +433,15 @@ class Meetlify:
             logging.info("... wrote output/redirects file")
 
     def render_robots_txt(self):
+        # Add additional sitemaps to Robots.txt if not added in robots.json
+        self.robots.add_sitemaps(
+            additional_sitems=[
+                sitemap.name
+                for sitemap in self.sitemaps[STATUS.PUBLISHED, STATUS.DONE]
+                if sitemap.robots_txt
+            ]
+        )
+
         if self.configs.robots:
             with open(
                 Path(
