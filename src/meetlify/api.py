@@ -372,7 +372,13 @@ class Meetlify:
             )
 
             with open(
-                Path(self.dest, self.configs.folders.output, page.slug, "index.html"),
+                Path(
+                    self.dest,
+                    self.configs.folders.output,
+                    self.configs.folders.pages,
+                    page.slug,
+                    "index.html",
+                ),
                 mode="w",
                 encoding="utf-8",
             ) as file:
