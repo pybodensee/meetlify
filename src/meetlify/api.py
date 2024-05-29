@@ -367,9 +367,12 @@ class Meetlify:
         """Render permanent pages"""
 
         for page in self.pages[STATUS.PUBLISHED, STATUS.DONE]:
-            Path(self.dest, self.configs.folders.output, page.slug).mkdir(
-                parents=True, exist_ok=True
-            )
+            Path(
+                self.dest,
+                self.configs.folders.output,
+                self.configs.folders.pages,
+                page.slug,
+            ).mkdir(parents=True, exist_ok=True)
 
             with open(
                 Path(
