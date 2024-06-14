@@ -124,9 +124,12 @@ class Posts:
         category_order = dict()
         for content in self.content:
             for category in content.categories:
-                if category_order.get(category):
-                    category_order[category].append(content)
-                else:
-                    category_order[category] = [content]
+                if content.status in [
+                    stat.value for stat in [STATUS.PUBLISHED, STATUS.DONE]
+                ]:
+                    if category_order.get(category):
+                        category_order[category].append(content)
+                    else:
+                        category_order[category] = [content]
 
         return category_order
