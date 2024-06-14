@@ -445,7 +445,7 @@ class Meetlify:
         # Add additional sitemaps to Robots.txt if not added in robots.json
         self.robots.add_sitemaps(
             additional_sitems=[
-                sitemap.name
+                f"{self.configs.URL}/sitemap-{sitemap.name}.xml"
                 for sitemap in self.sitemaps[STATUS.PUBLISHED, STATUS.DONE]
                 if sitemap.robots_txt
             ]

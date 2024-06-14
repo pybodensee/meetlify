@@ -83,7 +83,7 @@ class Robots:
 
     def __str__(self) -> str:
         sitemap_as_str = "\nSitemap: " if self.sitemaps else ""
-        sitemap_as_str += "\nSitemap: ".join(self.sitemaps)
+        sitemap_as_str += "\nSitemap: ".join(set(self.sitemaps)) # Get Uniqe Sitemaps
 
         return (
             "\n".join([str(robot_agent) for robot_agent in self.all_robots])
