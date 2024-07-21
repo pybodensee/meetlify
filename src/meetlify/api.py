@@ -390,7 +390,7 @@ class Meetlify:
                         meta=self.configs, page=page
                     )
                 )
-                logging.info(f"... wrote output/{page.slug}")
+                logging.info(f"...... wrote output/pages/{page.slug}")
 
     def render_sitemaps(self):
         """Render Sitemaps"""
@@ -410,7 +410,7 @@ class Meetlify:
                         meta=self.configs, sitemap=sitemap
                     )
                 )
-                logging.info(f"... wrote output/{sitemap.name}/sitemap")
+                logging.info(f"... wrote output/sitemap/{sitemap.name}")
 
         with open(
             Path(

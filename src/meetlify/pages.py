@@ -64,6 +64,7 @@ class Page:
     slug: str
     create_date: datetime
     last_modified: datetime
+    feature_image: str
     toc: str
     content: str
     add_to_sitemap: bool
@@ -84,6 +85,7 @@ class Page:
             last_modified=datetime.fromtimestamp(
                 page_md_.stat().st_mtime, tz=timezone.utc
             ),
+            feature_image=meta.get("feature_image"),
             toc=toc,
             content=content,
             add_to_sitemap=bool(meta.get("add_to_sitemap")),
